@@ -1,16 +1,37 @@
 package com.fiipractic.week1.controllers;
 
+import com.fiipractic.week1.PokemonDB;
 import com.fiipractic.week1.models.Pokemon;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class PokemonController {
 
-    //@GetMapping(path ="/pokemons");
-    //public List<Pokemon> Pokemons(){
-    //    return ;
-    //}
+    private final PokemonDB pokemonDB;
+
+    public PokemonController(PokemonDB pokemonDB) {
+        this.pokemonDB = pokemonDB;
+    }
+
+    @GetMapping(path = "/pokemons")
+    public List<Pokemon> Pokemons() {
+        return pokemonDB.getAll();
+    }
+
+    @GetMapping(path="/pokemons/{id}")
+    public Pokemon pokemon(@PathVariable Integer id){
+        return pokemonDB.getById(id);
+    }
+
+    @PostMapping(path = "/pokemons")
+    public Pokemon createPokemon(@RequestBody Pokemon pokemon){
+        return pokemonDB.createPokemon(pokemon);
+    }
+
+    @DeleteMapping(path ="/pokemons/{id}")
+    public Pokemon deletePokemon(@PathVariable Integer id){
+        return pokemonDB.deleteById(id);
+    }
 }

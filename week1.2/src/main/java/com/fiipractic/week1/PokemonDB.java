@@ -1,14 +1,18 @@
 package com.fiipractic.week1;
 
 import com.fiipractic.week1.models.Pokemon;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class PokemonDB {
-    private static List<Pokemon> pokemons = new ArrayList<Pokemon>();
+    private static final List<Pokemon> pokemons = new ArrayList<Pokemon>();
 
-    static{
+    static {
         pokemons.add(new Pokemon(1, "Bulbasaur", "Grass/Poison", "Cezar", 99));
         pokemons.add(new Pokemon(2, "Ivysaur", "Grass/Poison", "Professor Oak", 40));
         pokemons.add(new Pokemon(3, "Venusaur", "Grass/Poison", "Professor Oak", 50));
@@ -29,5 +33,33 @@ public class PokemonDB {
         pokemons.add(new Pokemon(18, "Pidgeot", "Normal/Flying", "Bird Keeper", 25));
         pokemons.add(new Pokemon(19, "Rattata", "Normal", "Youngster", 5));
         pokemons.add(new Pokemon(20, "Raticate", "Normal", "Youngster", 15));
+    }
+
+    public List<Pokemon> getAll() {
+        return pokemons;
+    }
+
+    public Pokemon getById(Integer id){
+        for (Pokemon pokemon : pokemons){
+            if(pokemon.getId().equals(id)){
+                return pokemon;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    public Pokemon createPokemon(Pokemon pokemon){
+        pokemons.add(pokemon);
+        return pokemon;
+    }
+
+    public Pokemon deleteById(Integer id) {
+        for (Pokemon pokemon : pokemons){
+            if(pokemon.getId().equals(id)){
+                pokemons.remove(pokemon);
+                return pokemon;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 }
