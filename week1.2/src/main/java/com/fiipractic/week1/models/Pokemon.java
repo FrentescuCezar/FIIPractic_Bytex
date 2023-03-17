@@ -1,7 +1,15 @@
 package com.fiipractic.week1.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Pokemon {
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
     private String name;
     private String type;
@@ -14,6 +22,10 @@ public class Pokemon {
         this.type = type;
         this.trainer = trainer;
         this.level = level;
+    }
+
+    public Pokemon() {
+
     }
 
     public Integer getId() {
