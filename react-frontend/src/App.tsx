@@ -4,8 +4,8 @@
 import React, { useState } from 'react'
 
 import './App.css';
-import TodoTable from './components/TodoTable';
-import NewTodoForm from './components/NewTodoForm';
+import { TodoTable } from './components/TodoTable';
+import { NewTodoForm } from './components/NewTodoForm';
 
 function App() {
 
@@ -18,7 +18,7 @@ function App() {
     { rowNumber: 4, rowDescription: 'Cacat', rowAssigned: 'Eric' },
   ])
 
-  const addTodo = (description, assigned) => {
+  const addTodo = (description: string, assigned: string) => {
 
     let rowNumber = 1;
 
@@ -37,7 +37,7 @@ function App() {
     }
   }
 
-  const deleteTodo = (rowNumber) => {
+  const deleteTodo = (rowNumber: number) => {
     const newTodoList = todoList.filter((todo) => todo.rowNumber !== rowNumber);
     setTodos(newTodoList);
   }

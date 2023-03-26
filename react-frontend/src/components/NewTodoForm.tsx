@@ -1,16 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, ChangeEvent } from 'react'
 
-function NewTodoForm(props) {
+export const NewTodoForm: React.FC<{
+    addTodo: Function
+}> = (props) => {
+
     const [description, setDescription] = useState('');
     const [assigned, setAssigned] = useState('');
 
-    const descriptionChange = (event) => {
+    const descriptionChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(event.target.value);
-    }
+    };
 
-    const assignedChange = (event) => {
+    const assignedChange = (event: ChangeEvent<HTMLInputElement>) => {
         setAssigned(event.target.value);
-    }
+    };
 
     const submitTodo = () => {
         if (description === '' || assigned === '') {
@@ -20,7 +23,7 @@ function NewTodoForm(props) {
             props.addTodo(description, assigned);
             setDescription('');
             setAssigned('');
-            
+
             alert('Todo added');
         }
     }
@@ -36,8 +39,7 @@ function NewTodoForm(props) {
                         required
                         onChange={assignedChange}
                         value={assigned}
-                    >
-                    </input>
+                    />
                 </div>
                 <div className='mb-3'>
                     <label className='form-label'>Description</label>
@@ -47,8 +49,7 @@ function NewTodoForm(props) {
                         required
                         onChange={descriptionChange}
                         value={description}
-                    >
-                    </textarea>
+                    />
                 </div>
                 <button type='button' className='btn btn-primary mt-3' onClick={submitTodo}>
                     Add Todo
@@ -57,5 +58,3 @@ function NewTodoForm(props) {
         </div>
     )
 }
-
-export default NewTodoForm
