@@ -1,6 +1,7 @@
 import { ReturnPokemon } from "./ReturnPokemon"
 import { useEffect, useState } from "react"
 import PoketexModel from "../../../models/PoketexModel"
+import { SpinnerLoading } from "../../Utils/SpinnerLoading"
 
 
 export const Carousel = () => {
@@ -41,7 +42,6 @@ export const Carousel = () => {
                     data.baseTotal, data.baseEggSteps, data.experienceGrowth
                 );
                 loadedPoketexes.push(poketex);
-                console.log(poketex)
             }
 
             setPoketexes(loadedPoketexes);
@@ -57,9 +57,7 @@ export const Carousel = () => {
 
     if (isLoading) {
         return (
-            <div className='container m-5'>
-                <p> Loading..</p>
-            </div>
+            <SpinnerLoading />
         )
     }
 
