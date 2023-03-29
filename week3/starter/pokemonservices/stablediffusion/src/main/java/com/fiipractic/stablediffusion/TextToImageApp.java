@@ -2,6 +2,7 @@ package com.fiipractic.stablediffusion;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fiipractic.pokemoncatalog.model.Pokedex;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +16,7 @@ public class TextToImageApp {
         String txt2imgUrl = "http://127.0.0.1:7861/sdapi/v1/txt2img";
         String prompt = "Goku";
         String negativePrompt = "";
-        ResponseEntity<String> response = submitPost(txt2imgUrl, prompt, negativePrompt, 4);
+        ResponseEntity<String> response = submitPost(txt2imgUrl, prompt, negativePrompt, 1);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             try {
@@ -54,8 +55,12 @@ public class TextToImageApp {
 
     public static void saveEncodedImage(String b64Image, String outputPath) {
         try {
-            byte[] decodedBytes = Base64.getDecoder().decode(b64Image);
-            Files.write(Paths.get(outputPath), decodedBytes);
+
+            //ImageSaver imageSaver = new ImageSaver();
+            //imageSaver.saveEncodedImage(b64Image, "hey");
+
+            //byte[] decodedBytes = Base64.getDecoder().decode(b64Image);
+            //Files.write(Paths.get(outputPath), decodedBytes);
         } catch (Exception e) {
             System.err.println("Error saving image: " + e.getMessage());
         }

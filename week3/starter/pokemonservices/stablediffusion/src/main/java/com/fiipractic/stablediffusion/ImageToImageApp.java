@@ -78,8 +78,13 @@ public class ImageToImageApp {
 
     public static void saveEncodedImage(String b64Image, String outputPath) {
         try {
-            byte[] decodedBytes = Base64.getDecoder().decode(b64Image);
-            Files.write(Paths.get(outputPath), decodedBytes);
+
+            //ImageSaver imageSaver = new ImageSaver();
+
+            //imageSaver.saveEncodedImage(b64Image, "hey");
+
+            //byte[] decodedBytes = Base64.getDecoder().decode(b64Image);
+            //Files.write(Paths.get(outputPath), decodedBytes);
         } catch (Exception e) {
             System.err.println("Error saving image: " + e.getMessage());
         }

@@ -3,9 +3,9 @@ server:
 
 spring:
   application:
-    name: battle
+    name: pokemoncatalog
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/poketex
     username: postgres
     password: desene123
     hikari:
