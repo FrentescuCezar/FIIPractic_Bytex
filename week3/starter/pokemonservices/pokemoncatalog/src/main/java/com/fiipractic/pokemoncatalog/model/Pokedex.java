@@ -21,6 +21,7 @@ public class Pokedex {
     private Integer id;
     private String username;
     private String name;
+    @Column(columnDefinition = "text")
     private String description;
     @Column(name = "image", columnDefinition = "text")
     private String image;

@@ -6,7 +6,7 @@ import com.fiipractic.pokemoncatalog.model.Pokedex;
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
