@@ -110,6 +110,21 @@
   }
 }
 
+.card {
+  max-width: 1200px;
+  /* adjust as needed */
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card-img-top {
+  width: 150px;
+  /* adjust as needed */
+  height: 150px;
+  /* adjust as needed */
+  object-fit: contain;
+}
+
 
 /* ########### ########### ###########*/
 

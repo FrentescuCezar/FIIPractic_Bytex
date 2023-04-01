@@ -1,8 +1,12 @@
 package com.fiipractic.stablediffusion.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fiipractic.pokemoncatalog.model.Pokedex;
+import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
-import org.springframework.stereotype.Controller;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,10 +18,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class StableDiffusionController {
 
     private final StableDiffusionService stableDiffusionService;
+    private final StableDiffusionRepository stableDiffusionRepository;
 
-    public StableDiffusionController(StableDiffusionService stableDiffusionService) {
+    public StableDiffusionController(StableDiffusionService stableDiffusionService, StableDiffusionRepository stableDiffusionRepository) {
         this.stableDiffusionService = stableDiffusionService;
+        this.stableDiffusionRepository = stableDiffusionRepository;
     }
+
 
     @GetMapping(value = "/trial")
     public String trial(@RequestParam String prompt,

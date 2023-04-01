@@ -5,23 +5,30 @@ import { SearchPoketex } from './Components/SearchPoketex'
 import { Pagination } from '../Utils/Pagination'
 
 export const SearchPoketexesPage = () => {
-    const [poketexes, setPoketexes] = useState<PoketexModel[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(true)
-    const [httpError, setHttpError] = useState(null)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [poketexesPerPage] = useState(5)
-    const [totalAmountOfPoketexes, setTotalAmountOfPoketexes] = useState(0)
-    const [totalPages, setTotalPages] = useState(0)
-
+    const [poketexes, setPoketexes] = useState<PoketexModel[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [httpError, setHttpError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [poketexesPerPage] = useState(5);
+    const [totalAmountOfPoketexes, setTotalAmountOfPoketexes] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [search, setSearch] = useState('');
+    const [searchUrl, setSearchUrl] = useState('');
 
 
     useEffect(() => {
         const fetchPoketex = async () => {
 
-            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
             const baseUrl: string = "/api/pokedexes";
-            const url: string = `${baseUrl}?page=${currentPage - 1}&size=${poketexesPerPage}`;
+            let url: string = ``;
+
+            if (searchUrl === '') {
+                url = `${baseUrl}?page=${currentPage - 1}&size=${poketexesPerPage}`;
+            } else {
+                let searchWithPage = searchUrl.replace('<pageNumber>', `${currentPage - 1}`);
+                url = baseUrl + searchWithPage;
+            }
+
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -30,19 +37,23 @@ export const SearchPoketexesPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Something went wrong!');
+                throw new Error('The Servers are down. Please try again later.');
             }
             const responseJson = await response.json();
             const responseData = responseJson._embedded.pokedexes;
             setTotalAmountOfPoketexes(responseJson.page.totalElements);
-            setTotalPages(responseJson.page.totalPages)
+            setTotalPages(responseJson.page.totalPages);
 
 
             const loadedPoketexes: PoketexModel[] = [];
             for (const key in responseData) {
+
                 const data = responseData[key];
+                const selfLink = data._links.self.href;
+                const id = parseInt(selfLink.split('/').pop()); // Extract the ID from the self link
+
                 const poketex = new PoketexModel(
-                    data.id, data.name, data.username,
+                    id, data.name, data.username, // Use the extracted ID here
                     data.description, data.image, data.seed,
                     data.prompt, data.steps, data.generation,
                     data.abilities, data.type1, data.type2,
@@ -63,7 +74,8 @@ export const SearchPoketexesPage = () => {
 
         })
         window.scrollTo(0, 0);
-    }, [currentPage]);
+    }, [currentPage, searchUrl]);
+
 
 
 
@@ -81,8 +93,28 @@ export const SearchPoketexesPage = () => {
         )
     }
 
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            searchHandleChange();
+        }
+    };
+
+    const searchHandleChange = () => {
+        setCurrentPage(1);
+
+        if (search === '') {
+            setSearchUrl('');
+        } else {
+            const searchTerms = search.trim().split(/\s+/);
+            const nameQueries = searchTerms.map(term => `name=${term}`).join('&');
+            const promptQueries = searchTerms.map(term => `prompt=${term}`).join('&');
+            setSearchUrl(`/search/findByNameContainingIgnoreCaseOrPromptContainingIgnoreCase?${nameQueries}&${promptQueries}&page=<pageNumber>&size=${poketexesPerPage}`);
+        }
+    }
+
     const indexOfLastPoketex: number = currentPage * poketexesPerPage;
     const indexOfFirstPoketex: number = indexOfLastPoketex - poketexesPerPage;
+
     let lastItem = poketexesPerPage * currentPage <= totalAmountOfPoketexes ?
         poketexesPerPage * currentPage : totalAmountOfPoketexes;
 
@@ -96,9 +128,17 @@ export const SearchPoketexesPage = () => {
                     <div className='row mt-5'>
                         <div className='col-6'>
                             <div className='d-flex'>
-                                <input className='form-control me-2' type='search'
-                                    placeholder='Search' aria-labelledby='Search' />
-                                <button className='btn btn-outline-success'> Search</button>
+                                <input
+                                    className='form-control me-2' type='search'
+                                    placeholder='Search' aria-labelledby='Search'
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                />
+                                <button className='btn btn-outline-success'
+                                    onClick={() => searchHandleChange()}>
+                                    Search
+                                </button>
                             </div>
                         </div>
                         <div className='col-4'>

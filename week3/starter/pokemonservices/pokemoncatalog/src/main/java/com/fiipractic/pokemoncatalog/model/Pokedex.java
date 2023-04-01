@@ -1,23 +1,23 @@
 package com.fiipractic.pokemoncatalog.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @AllArgsConstructor
-@Data
 @NoArgsConstructor
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
+@Setter
 public class Pokedex {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     private Integer id;
     private String username;
     private String name;

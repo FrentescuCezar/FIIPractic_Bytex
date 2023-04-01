@@ -9,12 +9,12 @@ export const Footer = () => {
                     <p className="col-md-4 mb-0 text-black">@ Poketex, Frentescu Cezar-Augustin</p>
                     <ul className="nav navbar-dark  col-md-4 justify-content-end">
                         <li className="nav-item">
-                            <a href="#" className="nav-link px-2 text-black">
+                            <a href="https://github.com/FrentescuCezar" target="_blank" className="nav-link px-2 text-black">
                                 Github
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a href="#" className="nav-link px-2 text-black">
+                            <a href="https://www.linkedin.com/in/frentescu-cezar" target="_blank" className="nav-link px-2 text-black">
                                 Linkedin
                             </a>
                         </li>

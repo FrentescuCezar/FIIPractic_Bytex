@@ -1,5 +1,5 @@
 import { Carousel } from "./Components/Carousel"
-import { LibraryServices } from "./Components/LibraryServices"
+import { LibraryServices } from "./Components/PoketexServices"
 
 export const Homepage = () => {
     return (
