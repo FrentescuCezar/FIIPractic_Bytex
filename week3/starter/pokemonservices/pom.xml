@@ -25,6 +25,8 @@
         <module>breeding</module>
         <module>breeding</module>
         <module>whos.that.pokemon</module>
+        <module>comment</module>
+        <module>comment</module>
     </modules>
     <properties>
         <java.version>17</java.version>

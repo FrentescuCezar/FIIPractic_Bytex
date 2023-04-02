@@ -2,12 +2,18 @@ import { useEffect, useState } from 'react'
 import PoketexModel from '../../models/PoketexModel';
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
 import { ReviewBox } from './ReviewBox';
+import CommentModel from '../../models/CommentModel';
 
 export const PoketexPage = () => {
 
     const [poketex, setPoketex] = useState<PoketexModel>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [httpError, setHttpError] = useState(null);
+
+    // Comment state
+    const [comment, setComment] = useState<CommentModel[]>([])
+    const [totalStars, setTotalStars] = useState<number>(0)
+    const [isLoadingComment, setIsLoadingComment] = useState<boolean>(true)
 
     const poketexId = (window.location.pathname).split("/")[2]; //localhost:3000/pokemon/1
 
@@ -17,7 +23,7 @@ export const PoketexPage = () => {
 
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-            const baseUrl: string = `/api/pokedexes/${poketexId}`;
+            const baseUrl: string = `http://localhost:8084/api/pokedexes/${poketexId}`;
             const response = await fetch(baseUrl, {
                 method: 'GET',
                 headers: {
@@ -64,6 +70,13 @@ export const PoketexPage = () => {
             setHttpError(error.message);
         })
     }, []);
+
+
+    useEffect(() => {
+        const fetchComments = async () => {
+            const commentUrl: string = 'http://localhost:8080/api/comments/search/findByPokemonId?PokemonId=' + poketexId;
+        }
+    })
 
 
     if (isLoading) {

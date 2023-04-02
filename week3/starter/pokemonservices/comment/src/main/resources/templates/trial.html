@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Trial</title>
+</head>
+
+<style>
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+        }
+        .pokemon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .pokemon-name {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .pokemon-img {
+            height: 128px;
+            image-rendering: pixelated;
+        }
+
+        .pokemon-img2 {
+            height: 256px;
+            image-rendering: pixelated;
+        }
+
+        #breeder{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #parents{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #heart{
+           height: 100px;
+        }
+
+
+
+
+</style>
+
+<body>
+<h1>Trial</h1>
+<hr/>
+
+<div id="breeder">
+    <span text="${pokemon1}" class="pokemon-name"></span>
+</div>
+
+
+</body>
+</html>

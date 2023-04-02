@@ -16,13 +16,16 @@ export const Carousel = () => {
 
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-            const url: string = "/api/pokedexes";
+            const url: string = "http://localhost:8084/api/pokedexes";
+            console.log('Request URL:', url); // Log the request URL
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     accept: 'application/json',
                 },
             });
+
+            console.log('Response:', response); // Log the response object
 
             if (!response.ok) {
                 throw new Error('Something went wrong!');
