@@ -5,11 +5,16 @@ import com.fiipractic.pokemoncatalog.model.Pokedex;
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -35,4 +40,12 @@ public class StableDiffusionController {
         System.out.println(stableDiffusionService.sendPrompt(prompt, negativePrompt, batch_size, steps));
         return "trial";
     }
+
+    @GetMapping(value = "/pokedex/random")
+    public Page<Pokedex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return stableDiffusionRepository.getRandomPokemons(pageable);
+    }
+
+
 }

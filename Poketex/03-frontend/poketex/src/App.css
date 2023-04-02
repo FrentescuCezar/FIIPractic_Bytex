@@ -60,7 +60,7 @@
 }
 
 .btn-black-bold {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   /* Replace with the desired font size */
 
   /* Add bold weight */
@@ -125,6 +125,18 @@
   object-fit: contain;
 }
 
+
+@media (min-width: 992px) {
+  .guess-form {
+    width: 50%;
+  }
+}
+
+@media (max-width: 991px) {
+  .guess-form {
+    width: 95%;
+  }
+}
 
 /* ########### ########### ###########*/
 

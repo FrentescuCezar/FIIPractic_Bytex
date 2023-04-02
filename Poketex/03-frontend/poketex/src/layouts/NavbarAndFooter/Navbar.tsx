@@ -1,10 +1,18 @@
 // Navbar.tsx
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 
 
 
 export const Navbar: React.FC<{}> = (props) => {
+
+    const history = useHistory();
+    const handleNavLinkClick = (path: string) => {
+        history.push(path);
+    };
+
+
+
     return (
 
         <nav className="navbar navbar-expand-lg main-color-gray shadow-sm py-3">
@@ -24,11 +32,17 @@ export const Navbar: React.FC<{}> = (props) => {
 
                 <div className="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul className="navbar-nav me-auto my-2 my-lg-0">
-                        <li className="nav-item me-auto mx-5 ">
+                        <li className="nav-item me-auto mx-4 ">
                             <NavLink className="nav-link btn-black-bold" to="/home">Home</NavLink>
                         </li>
-                        <li className="nav-item mx-5">
+                        <li className="nav-item mx-2">
                             <NavLink className="nav-link btn-black-bold" to="/search">Search</NavLink>
+                        </li>
+                        <li className="nav-item ">
+                            <NavLink className="nav-link btn-black-bold" to="/pokemystery">MonBuilder</NavLink>
+                        </li>
+                        <li className="nav-item ">
+                            <NavLink className="nav-link btn-black-bold" to="/pokemystery">PokéMystery</NavLink>
                         </li>
                     </ul>
                     <button className="btn btn-outline-dark mx-5 btn-red-hover" type="button">Sign In</button>

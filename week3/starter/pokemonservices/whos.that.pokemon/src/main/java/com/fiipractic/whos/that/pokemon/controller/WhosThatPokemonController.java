@@ -1,14 +1,23 @@
 package com.fiipractic.whos.that.pokemon.controller;
 
-import com.fiipractic.whos.that.pokemon.model.Pokemon;
+import com.fiipractic.pokemoncatalog.model.Pokedex;
+
 import com.fiipractic.whos.that.pokemon.service.WhosThatPokemonService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+@RestController
 public class WhosThatPokemonController {
 
     private final WhosThatPokemonService whosThatPokemonService;
@@ -17,38 +26,42 @@ public class WhosThatPokemonController {
         this.whosThatPokemonService = whosThatPokemonService;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/")
-    public String whosThatPokemon(Model model){
-
-        Pokemon pokemon = whosThatPokemonService.getRandomPokemon();
-        model.addAttribute("pokemonIndex", pokemon.getId());
-
-        return "whos-that-pokemon";
+    public Pokedex whosThatPokemon() {
+        Pokedex pokemon = whosThatPokemonService.getRandomPokemon();
+        return pokemon;
     }
 
-    @PostMapping(value = "/guess")
-    public String guessPokemon(@RequestParam String guess, @RequestParam Integer pokemonIndex, Model model){
-        System.out.println(guess);
-        System.out.println(pokemonIndex);
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(value = "/guess", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> guessPokemon(@RequestParam String guess, @RequestParam Integer pokemonIndex) {
+        Pokedex pokemon = whosThatPokemonService.getPokemonById(pokemonIndex);
+        String result;
+        String[] promptArray = pokemon.getPrompt().split(" ");
+
+        boolean isGuessCorrect = false;
+
+        if (guess.equalsIgnoreCase(pokemon.getName()))
+            isGuessCorrect = true;
 
 
-        Pokemon pokemon = whosThatPokemonService.getPokemonById(pokemonIndex);
+        for (String promptWord : promptArray)
+            if (guess.equalsIgnoreCase(promptWord)) {
+                isGuessCorrect = true;
+                break;
+            }
 
-        String result ="";
 
-        if(guess.equalsIgnoreCase(pokemon.getName())){
+        if (isGuessCorrect)
             result = "Correct!";
-        }
-        else{
-            result = "Wrong! The correct answers is " + pokemon.getName() + "!";
-        }
+        else
+            result = "Wrong!";
 
-        System.out.println(pokemon);
-        System.out.println(result);
 
-        model.addAttribute("pokemonIndex",pokemonIndex);
-        model.addAttribute("result",result);
+        Map<String, Object> response = new HashMap<>();
+        response.put("result", result);
 
-        return "whos-that-pokemon";
+        return ResponseEntity.ok(response);
     }
 }

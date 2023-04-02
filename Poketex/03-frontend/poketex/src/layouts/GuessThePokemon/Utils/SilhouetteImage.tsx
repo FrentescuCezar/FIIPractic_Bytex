@@ -35,7 +35,7 @@ const SilhouetteImage: React.FC<SilhouetteImageProps> = ({ imageUrl, customHeigh
                     const g = data[i + 1];
                     const b = data[i + 2];
 
-                    if (r > 200 && g > 200 && b > 200) {
+                    if (r > 150 && g > 150 && b > 150) {
                         data[i] = data[i + 1] = data[i + 2] = 255;
                         data[i + 3] = 0;
                     } else {
