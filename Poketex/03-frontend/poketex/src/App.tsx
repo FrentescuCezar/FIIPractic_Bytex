@@ -6,6 +6,7 @@ import { Homepage } from './layouts/Homepage/Homepage';
 import { SearchPoketexesPage } from './layouts/SearchPoketexesPage/SearchPoketexesPage';
 import { Route, Redirect, Switch, RouteProps } from 'react-router-dom';
 import { PoketexPage } from './layouts/PoketexPage/PoketexPage';
+import SilhouetteImage from './layouts/GuessThePokemon/SilhouetteImageProps';
 
 export const App = () => {
   return (
@@ -20,6 +21,7 @@ export const App = () => {
 
           <Route path='/home' exact>
             <Homepage />
+
           </Route>
 
           <Route path='/search'>
