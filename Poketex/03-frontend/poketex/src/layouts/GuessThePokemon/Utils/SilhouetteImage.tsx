@@ -15,6 +15,7 @@ const SilhouetteImage: React.FC<SilhouetteImageProps> = ({ imageUrl, customHeigh
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
 
+
             const img = new Image();
             img.crossOrigin = 'anonymous';
             img.src = imageUrl;
@@ -42,6 +43,8 @@ const SilhouetteImage: React.FC<SilhouetteImageProps> = ({ imageUrl, customHeigh
                         data[i] = data[i + 1] = data[i + 2] = 0;
                     }
                 }
+
+                ctx.imageSmoothingEnabled = true; // Enable anti-aliasing
 
                 ctx.putImageData(imageData, 0, 0);
             };

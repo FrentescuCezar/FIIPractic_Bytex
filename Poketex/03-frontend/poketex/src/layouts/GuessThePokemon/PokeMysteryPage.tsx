@@ -27,6 +27,9 @@ export const PokeMysteryPage = () => {
     const [maskedUsername, setMaskedUsername] = useState<string>("");
     const [maskedPrompt, setMaskedPrompt] = useState<string>("");
 
+    const [animationKey, setAnimationKey] = useState<number>(0);
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -70,8 +73,8 @@ export const PokeMysteryPage = () => {
                     setMaskedPrompt(poketex.prompt);
                 }
             }
-
             setFeedbackMessage(result);
+            setAnimationKey(animationKey + 1);
         } catch (error: any) {
             setFeedbackMessage(`Error: ${error.message}`);
         }
@@ -81,7 +84,7 @@ export const PokeMysteryPage = () => {
         <div className="d-flex justify-content-center">
             <form onSubmit={handleSubmitGuess} className="guess-form">
                 <label htmlFor="guess-input" className="form-label">
-                    Your Guess:
+                    Type your Guess here:
                 </label>
                 <input
                     type="text"
@@ -89,9 +92,9 @@ export const PokeMysteryPage = () => {
                     className="form-control"
                     value={guess}
                     onChange={(e) => setGuess(e.target.value)}
-                    placeholder="Type your guess here"
+                    placeholder="The name or a word from the Prompt"
                     pattern="^[^,\s]+$"
-                    title="Please enter only one word with no spaces or commas."
+                    title="plz enter only one word with no spaces or commas."
                     required
                 />
                 <div className="d-flex justify-content-center">
@@ -108,11 +111,12 @@ export const PokeMysteryPage = () => {
             <div className="text-center w-15">
                 <p>Remaining tries: {remainingTries}</p>
                 {feedbackMessage && (
-                    <p
-                        className={`alert ${feedbackMessage === "Correct!" ? "alert-success" : "alert-danger"
-                            }`}
-                    >
-                        {feedbackMessage}
+                    <p key={animationKey} className="pulse-animation">
+                        {feedbackMessage && (
+                            <p className={`alert ${feedbackMessage === "Correct!" ? "alert-success" : "alert-danger"}`}>
+                                {feedbackMessage}
+                            </p>
+                        )}
                     </p>
                 )}
             </div>
