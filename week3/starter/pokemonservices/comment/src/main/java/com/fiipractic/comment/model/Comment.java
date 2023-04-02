@@ -28,8 +28,8 @@ public class Comment {
     @Column(name="pokemon_id")
     private Long pokemonId;
 
-    @Column(name="review_description")
-    private String reviewDescription;
+    @Column(name="comment_description")
+    private String commentDescription;
 
 
 

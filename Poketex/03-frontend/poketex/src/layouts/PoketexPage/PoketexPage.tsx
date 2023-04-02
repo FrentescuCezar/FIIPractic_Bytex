@@ -3,6 +3,7 @@ import PoketexModel from '../../models/PoketexModel';
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
 import { ReviewBox } from './ReviewBox';
 import CommentModel from '../../models/CommentModel';
+import { LatestComments } from './LatestComments';
 
 export const PoketexPage = () => {
 
@@ -11,7 +12,7 @@ export const PoketexPage = () => {
     const [httpError, setHttpError] = useState(null);
 
     // Comment state
-    const [comment, setComment] = useState<CommentModel[]>([])
+    const [comments, setComments] = useState<CommentModel[]>([])
     const [totalStars, setTotalStars] = useState<number>(0)
     const [isLoadingComment, setIsLoadingComment] = useState<boolean>(true)
 
@@ -74,12 +75,53 @@ export const PoketexPage = () => {
 
     useEffect(() => {
         const fetchComments = async () => {
-            const commentUrl: string = 'http://localhost:8080/api/comments/search/findByPokemonId?PokemonId=' + poketexId;
-        }
-    })
+            const commentUrl: string = 'http://localhost:8086/commentapi/comments/search/findByPokemonId?pokemonId=' + poketexId;
+
+            const responseComment = await fetch(commentUrl);
+
+            if (!responseComment.ok) {
+                throw new Error('The comments are not showing!');
+            }
+
+            const responseJsonComments = await responseComment.json();
+
+            const responseData = responseJsonComments._embedded.comments;
+
+            const loadedComments: CommentModel[] = [];
+
+            let weightedStarComments: number = 0;
+
+            for (const key in responseData) {
+                loadedComments.push({
+                    id: responseData[key].id,
+                    userEmail: responseData[key].userEmail,
+                    date: responseData[key].date,
+                    rating: responseData[key].rating,
+                    pokemonId: responseData[key].pokemonId,
+                    commentDescription: responseData[key].commentDescription
+
+                });
+                weightedStarComments += responseData[key].rating;
+            }
+
+            if (loadedComments) {
+                const round = (Math.round((weightedStarComments / loadedComments.length) * 2) / 2).toFixed(1);
+                setTotalStars(Number(round));
+            }
+
+            setComments(loadedComments);
+            setIsLoadingComment(false);
+        };
+
+        fetchComments().catch((error: any) => {
+            setIsLoadingComment(false);
+            setHttpError(error.message);
+        })
+
+    }, [poketexId]);
 
 
-    if (isLoading) {
+    if (isLoading || isLoadingComment) {
         return (
             <SpinnerLoading />
         )
@@ -118,6 +160,8 @@ export const PoketexPage = () => {
                         </div>
                     </div>
                     <ReviewBox poketex={poketex} mobile={false} />
+                    <hr />
+                    <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} />
                 </div>
             </div>
 
@@ -139,6 +183,7 @@ export const PoketexPage = () => {
                 </div>
                 <ReviewBox poketex={poketex} mobile={true} />
                 <hr />
+                <LatestComments comments={comments} poketexId={poketex?.id} mobile={true} />
             </div>
         </div>
     );
