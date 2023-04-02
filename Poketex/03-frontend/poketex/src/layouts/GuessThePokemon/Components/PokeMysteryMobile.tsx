@@ -1,5 +1,6 @@
 import React from "react";
 import SilhouetteImage from "../Utils/SilhouetteImage";
+import { Link } from "react-router-dom";
 
 interface PokeMysteryMobileProps {
     poketex: any;
@@ -28,12 +29,14 @@ export const PokeMysteryMobile: React.FC<PokeMysteryMobileProps> = ({
         <div className="container d-lg-none mt-5 d-flex flex-column align-items-center">
             <div className="d-flex flex-column align-items-center">
                 {showNormalImage ? (
-                    <img
-                        src={`data:image/png;base64,${poketex.image}`}
-                        width="256"
-                        height="256"
-                        alt="Pokemon"
-                    />
+                    <Link to={`/pokemon/${poketex.id}`}>
+                        <img
+                            src={`data:image/png;base64,${poketex.image}`}
+                            width="256"
+                            height="256"
+                            alt="Pokemon"
+                        />
+                    </Link>
                 ) : (
                     <SilhouetteImage
                         imageUrl={`data:image/png;base64,${poketex.image}`}

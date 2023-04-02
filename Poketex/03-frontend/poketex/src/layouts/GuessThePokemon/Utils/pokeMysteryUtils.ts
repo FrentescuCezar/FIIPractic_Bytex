@@ -1,4 +1,6 @@
 import React from "react";
+import { postGuess } from "../Api/pokeMysteryApi";
+
 
 export function truncateText(text: string, maxLength: number) {
     if (text.length > maxLength) {
