@@ -26,7 +26,7 @@ public class Comment {
     private double rating;
 
     @Column(name="pokemon_id")
-    private Long pokemonId;
+    private Integer pokemonId;
 
     @Column(name="comment_description")
     private String commentDescription;

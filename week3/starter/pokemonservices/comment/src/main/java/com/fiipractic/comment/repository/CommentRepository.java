@@ -11,4 +11,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     Page<Comment> findByPokemonId(@RequestParam("book_id") Integer pokemonId, Pageable pageable);
 
+    Comment findByUserEmailAndPokemonId(String userEmail, Integer pokemonId);
+
 }
