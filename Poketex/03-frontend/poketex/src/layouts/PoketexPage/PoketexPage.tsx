@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
 import PoketexModel from '../../models/PoketexModel';
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
-import { ReviewBox } from './ReviewBox';
+import { CommentBox } from './Components/CommentBox';
 import CommentModel from '../../models/CommentModel';
-import { LatestComments } from './LatestComments';
+import { LatestComments } from './Components/LatestComments';
+import { StarsComment } from './Components/StarsComment';
+import { useOktaAuth } from '@okta/okta-react';
 
 export const PoketexPage = () => {
+
+    const { authState } = useOktaAuth();
 
     const [poketex, setPoketex] = useState<PoketexModel>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -17,6 +21,12 @@ export const PoketexPage = () => {
     const [isLoadingComment, setIsLoadingComment] = useState<boolean>(true)
 
     const poketexId = (window.location.pathname).split("/")[2]; //localhost:3000/pokemon/1
+
+    const [isCommentLeft, setIsCommentLeft] = useState<boolean>(false);
+    const [isLoadingUserComment, setIsLoadingUserComment] = useState<boolean>(true);
+
+
+
 
 
     useEffect(() => {
@@ -73,6 +83,9 @@ export const PoketexPage = () => {
     }, []);
 
 
+
+
+
     useEffect(() => {
         const fetchComments = async () => {
             const commentUrl: string = 'http://localhost:8086/commentapi/comments/search/findByPokemonId?pokemonId=' + poketexId;
@@ -118,10 +131,44 @@ export const PoketexPage = () => {
             setHttpError(error.message);
         })
 
-    }, [poketexId]);
+    }, [isCommentLeft]);
 
 
-    if (isLoading || isLoadingComment) {
+
+
+
+    useEffect(() => {
+        const fetchUserCommentPokemon = async () => {
+            if (authState && authState.isAuthenticated) {
+                const url = `http://localhost:8086/commentapi/comments/user/pokemon?pokemonId=${poketexId}`;
+                const requestOptons = {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                };
+                const userComment = await fetch(url, requestOptons);
+                if (!userComment.ok) {
+                    throw new Error('Something went wrong!');
+                }
+                const userCommentResponseJson = await userComment.json();
+                console.log(authState)
+                console.log(userCommentResponseJson)
+                setIsCommentLeft(userCommentResponseJson);
+            }
+            setIsLoadingUserComment(false);
+        }
+        fetchUserCommentPokemon().catch((error: any) => {
+            setIsLoadingUserComment(false);
+            setHttpError(error.message);
+        })
+    }, [authState])
+
+
+
+
+    if (isLoading || isLoadingComment || isLoadingUserComment) {
         return (
             <SpinnerLoading />
         )
@@ -152,6 +199,11 @@ export const PoketexPage = () => {
                             <h1>{poketex?.name}</h1>
                             <h5 className='text-primary'>{poketex?.username}</h5>
                             <h6>"{poketex?.prompt}"</h6>
+                            <div className="container">
+                                <div className="d-flex flex-row">
+                                    <StarsComment rating={totalStars} size={40} />
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className='col-4 col-md-7 container'>
@@ -159,7 +211,11 @@ export const PoketexPage = () => {
                             <p className='lead'>{poketex?.description}</p>
                         </div>
                     </div>
-                    <ReviewBox poketex={poketex} mobile={false} />
+                    <CommentBox poketex={poketex}
+                        mobile={false}
+                        isAuthenticated={authState?.isAuthenticated}
+                        isCommentLeft={isCommentLeft}
+                    />
                     <hr />
                     <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} />
                 </div>
@@ -178,13 +234,21 @@ export const PoketexPage = () => {
                     <div className='ml-2'>
                         <h2>{poketex?.name}</h2>
                         <h5 className='text-primary'>{poketex?.username}</h5>
+                        <div className="d-flex flex-row">
+                            <StarsComment rating={totalStars} size={40} />
+                        </div>
                         <p className='lead'>{poketex?.description}</p>
                     </div>
                 </div>
-                <ReviewBox poketex={poketex} mobile={true} />
+                <CommentBox poketex={poketex}
+                    mobile={false}
+                    isAuthenticated={authState?.isAuthenticated}
+                    isCommentLeft={isCommentLeft}
+                />
                 <hr />
-                <LatestComments comments={comments} poketexId={poketex?.id} mobile={true} />
+                <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} />
             </div>
+
         </div>
     );
 }

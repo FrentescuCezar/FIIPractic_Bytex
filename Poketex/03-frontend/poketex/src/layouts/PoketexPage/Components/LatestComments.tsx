@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import CommentModel from "../../models/CommentModel";
-import { CommentUtil } from "../Utils/CommentUtil";
+import CommentModel from "../../../models/CommentModel";
+import { CommentUtil } from "./Comment";
 
 export const LatestComments: React.FC<{
     comments: CommentModel[]; poketexId: number | undefined, mobile: boolean

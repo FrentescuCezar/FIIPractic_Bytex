@@ -1,4 +1,5 @@
-import CommentModel from "../../models/CommentModel";
+import CommentModel from "../../../models/CommentModel";
+import { StarsComment } from "./StarsComment";
 
 export const CommentUtil: React.FC<{ comment: CommentModel }> = (props) => {
 
@@ -8,6 +9,9 @@ export const CommentUtil: React.FC<{ comment: CommentModel }> = (props) => {
     const dateYear = date.getFullYear();
 
     const dateRender = longMonth + ' ' + dateDay + ', ' + dateYear;
+
+
+    const userEmail = props.comment.userEmail.substring(0, props.comment.userEmail.indexOf('@'));
 
     return (
         <div>
@@ -19,8 +23,8 @@ export const CommentUtil: React.FC<{ comment: CommentModel }> = (props) => {
                     <div className='col'>
                         {dateRender}
                     </div>
-                    <div className='col'>
-
+                    <div className='mt-2'>
+                        <StarsComment rating={props.comment.rating} size={27} />
                     </div>
                 </div>
                 <div className='mt-2'>

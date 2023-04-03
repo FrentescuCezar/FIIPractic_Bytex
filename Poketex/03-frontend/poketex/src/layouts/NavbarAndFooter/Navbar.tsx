@@ -18,7 +18,7 @@ export const Navbar: React.FC<{}> = (props) => {
 
     const handleLogout = async () => oktaAuth.signOut();
 
-    console.log(authState.accessToken.accessToken);
+    //console.log(authState.accessToken.accessToken);
 
 
     return (
