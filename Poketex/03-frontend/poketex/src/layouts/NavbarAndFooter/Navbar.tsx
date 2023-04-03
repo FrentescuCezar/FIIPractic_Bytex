@@ -1,15 +1,24 @@
 // Navbar.tsx
 import React from 'react';
-import { NavLink, useHistory } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+
+import { useOktaAuth } from '@okta/okta-react';
+import { SpinnerLoading } from '../Utils/SpinnerLoading';
+
 
 
 
 export const Navbar: React.FC<{}> = (props) => {
 
-    const history = useHistory();
-    const handleNavLinkClick = (path: string) => {
-        history.push(path);
-    };
+    const { oktaAuth, authState } = useOktaAuth();
+
+    if (!authState) {
+        return <SpinnerLoading />
+    }
+
+    const handleLogout = async () => oktaAuth.signOut();
+
+    console.log(authState);
 
 
     return (
@@ -44,7 +53,12 @@ export const Navbar: React.FC<{}> = (props) => {
                             <NavLink className="nav-link btn-black-bold" to="/pokemystery">PokéMystery</NavLink>
                         </li>
                     </ul>
-                    <button className="btn btn-outline-dark mx-5 btn-red-hover" type="button">Sign In</button>
+                    {!authState.isAuthenticated
+                        ?
+                        <Link type='button' className="btn btn-outline-dark mx-5 btn-red-hover" to='/login'>Sign In</Link>
+                        :
+                        <button className='btn btn-outline-dark mx-5 btn-red-hover' onClick={handleLogout}>Logout</button>
+                    }
                 </div>
             </div>
         </nav>
