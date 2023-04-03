@@ -2,44 +2,74 @@ import React from 'react';
 import './App.css';
 import { Navbar } from './layouts/NavbarAndFooter/Navbar';
 import { Footer } from './layouts/NavbarAndFooter/Footer';
+
 import { Homepage } from './layouts/Homepage/Homepage';
 import { SearchPoketexesPage } from './layouts/SearchPoketexesPage/SearchPoketexesPage';
-import { Route, Redirect, Switch, useHistory } from 'react-router-dom';
 import { PoketexPage } from './layouts/PoketexPage/PoketexPage';
 import { PokeMysteryPage } from './layouts/GuessThePokemon/PokeMysteryPage';
 
+import { Route, Redirect, Switch, useHistory } from 'react-router-dom';
+
+import { oktaConfig } from './lib/oktaConfig';
+import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
+import { LoginCallback, Security } from '@okta/okta-react';
+import LoginWidget from './Auth/Login';
+
+const oktaAuth = new OktaAuth(oktaConfig)
+
+
 export const App = () => {
+
+
+  const customAuthHandler = () => {
+    history.push('/login');
+  }
+  const history = useHistory();
+
+  const restoreOriginalUri = async (_oktaAuth: any, originalUri: string) => {
+    history.replace(toRelativeUrl(originalUri || '/', window.location.origin));
+  }
+
+
   return (
     <div className="d-flex flex-column min-vh-100">
-      <Navbar />
+      <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri} onAuthRequired={customAuthHandler}>
+        <Navbar />
 
-      <div className='flex-grow-1'>
-        <Switch>
-          <Route path='/' exact>
-            <Redirect to='/home' />
-          </Route>
+        <div className='flex-grow-1'>
+          <Switch>
+            <Route path='/' exact>
+              <Redirect to='/home' />
+            </Route>
 
-          <Route path='/home' exact>
-            <Homepage />
+            <Route path='/home' exact>
+              <Homepage />
 
-          </Route>
+            </Route>
 
-          <Route path='/search'>
-            <SearchPoketexesPage />
-          </Route>
+            <Route path='/search'>
+              <SearchPoketexesPage />
+            </Route>
 
-          <Route path='/pokemon/:poketexId'>
-            <PoketexPage />
-          </Route>
+            <Route path='/pokemon/:poketexId'>
+              <PoketexPage />
+            </Route>
 
-          <Route path='/pokemystery'>
-            <PokeMysteryPage />
-          </Route>
+            <Route path='/pokemystery'>
+              <PokeMysteryPage />
+            </Route>
 
-        </Switch>
-      </div>
+            <Route path='/login' render={() =>
+              <LoginWidget config={oktaConfig} />}
+            />
 
-      <Footer />
+            <Route path='/login/callback' component={LoginCallback} />
+
+          </Switch>
+        </div>
+
+        <Footer />
+      </Security>
     </div>
   );
 };
