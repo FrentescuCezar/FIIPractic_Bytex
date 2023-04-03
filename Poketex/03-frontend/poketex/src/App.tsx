@@ -4,7 +4,7 @@ import { Navbar } from './layouts/NavbarAndFooter/Navbar';
 import { Footer } from './layouts/NavbarAndFooter/Footer';
 import { Homepage } from './layouts/Homepage/Homepage';
 import { SearchPoketexesPage } from './layouts/SearchPoketexesPage/SearchPoketexesPage';
-import { Route, Redirect, Switch, RouteProps } from 'react-router-dom';
+import { Route, Redirect, Switch, useHistory } from 'react-router-dom';
 import { PoketexPage } from './layouts/PoketexPage/PoketexPage';
 import { PokeMysteryPage } from './layouts/GuessThePokemon/PokeMysteryPage';
 

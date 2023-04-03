@@ -12,7 +12,6 @@ export const Navbar: React.FC<{}> = (props) => {
     };
 
 
-
     return (
 
         <nav className="navbar navbar-expand-lg main-color-gray shadow-sm py-3">
