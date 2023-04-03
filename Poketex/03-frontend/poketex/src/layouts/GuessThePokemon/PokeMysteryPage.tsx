@@ -83,6 +83,26 @@ export const PokeMysteryPage = () => {
     };
 
 
+    const refreshPokemon = async () => {
+        setIsLoading(true);
+        try {
+            const loadedPoketex = await fetchPoketex();
+            setPoketex(loadedPoketex);
+            setMaskedName(maskName(loadedPoketex.name));
+            setMaskedUsername(maskUsername(loadedPoketex.username));
+            setMaskedPrompt(maskPrompt(loadedPoketex.prompt));
+            setRemainingTries(3);
+            setIsCorrect(false);
+            setFeedbackMessage("");
+            setGuess("");
+            setIsLoading(false);
+        } catch (error: any) {
+            setIsLoading(false);
+            setHttpError(error.message);
+        }
+    };
+
+
 
     if (isLoading) {
         return <SpinnerLoading />;
@@ -117,7 +137,7 @@ export const PokeMysteryPage = () => {
                 remainingTries={remainingTries}
             />
             <RemainedTries remainingTries={remainingTries} feedbackMessage={feedbackMessage} animationKey={animationKey} />
-            <GuessInputForm guess={guess} handleSubmitGuess={handleSubmitGuess} setGuess={setGuess} />
+            <GuessInputForm guess={guess} handleSubmitGuess={handleSubmitGuess} setGuess={setGuess} refreshPokemon={refreshPokemon} />
         </div>
     );
 };

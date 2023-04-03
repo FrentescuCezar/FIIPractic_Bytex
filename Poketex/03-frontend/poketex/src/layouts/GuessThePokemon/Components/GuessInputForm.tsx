@@ -4,9 +4,11 @@ interface GuessInputFormProps {
     guess: string;
     handleSubmitGuess: (event: React.FormEvent) => Promise<void>;
     setGuess: (value: string) => void;
+    refreshPokemon: () => Promise<void>;
+
 }
 
-export const GuessInputForm: React.FC<GuessInputFormProps> = ({ guess, handleSubmitGuess, setGuess }) => {
+export const GuessInputForm: React.FC<GuessInputFormProps> = ({ guess, handleSubmitGuess, setGuess, refreshPokemon }) => {
     return (
         <div className="d-flex justify-content-center">
             <form onSubmit={handleSubmitGuess} className="guess-form">
@@ -27,6 +29,9 @@ export const GuessInputForm: React.FC<GuessInputFormProps> = ({ guess, handleSub
                 <div className="d-flex justify-content-center">
                     <button type="submit" className="btn btn-primary mt-2">
                         Submit
+                    </button>
+                    <button type="button" className="btn btn-secondary mt-2 ms-2" onClick={refreshPokemon}>
+                        Try a new Pokémon!
                     </button>
                 </div>
             </form>
