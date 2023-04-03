@@ -75,7 +75,7 @@ export const Carousel = () => {
 
 
     return (
-        <div className='container mt-5' style={{ height: 550 }}>
+        <div className='container mt-5' style={{ height: 580 }}>
             <div className='homepage-carousel-title'>
                 <h3>Top Pokemons by Votes</h3>
             </div>
