@@ -189,9 +189,4 @@ export const SearchPoketexesPage = () => {
         </div>
     )
 
-
-
-
-
-
 }

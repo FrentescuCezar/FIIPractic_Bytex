@@ -61,7 +61,7 @@ export const SearchPoketex: React.FC<{ poketex: PoketexModel }> = (props) => {
                     </div>
                 </div>
                 <div className='col-md-2 d-flex justify-content-center align-items-center'>
-                    <Link className='btn btn-md main-color text-white' to={`/pokemon/${props.poketex.id}`}>
+                    <Link className='btn main-color-red text-white' to={`/pokemon/${props.poketex.id}`}>
                         View Details
                     </Link>
                 </div>
