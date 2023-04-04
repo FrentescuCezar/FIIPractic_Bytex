@@ -19,12 +19,18 @@ export const PoketexPage = () => {
 
     const [poketex, setPoketex] = useState<PoketexModel>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [httpError, setHttpError] = useState(null);
+    const [poketexError, setPoketexError] = useState<string | null>(null);
+
+
+
+
+
 
     // Comment state
     const [comments, setComments] = useState<CommentModel[]>([])
     const [totalStars, setTotalStars] = useState<number>(0)
     const [isLoadingComment, setIsLoadingComment] = useState<boolean>(true)
+    const [commentsError, setCommentsError] = useState<string | null>(null);
 
     const poketexId = (window.location.pathname).split("/")[2];
 
@@ -88,7 +94,7 @@ export const PoketexPage = () => {
         };
         fetchPoketex().catch((error: any) => {
             setIsLoading(false);
-            setHttpError(error.message);
+            setPoketexError(error.message);
         })
     }, [poketexId]);
 
@@ -100,49 +106,44 @@ export const PoketexPage = () => {
         const fetchComments = async () => {
             const commentUrl: string = 'http://localhost:8086/commentapi/comments/search/findByPokemonId?pokemonId=' + poketexId;
 
-            const responseComment = await fetch(commentUrl);
-
-            if (!responseComment.ok) {
-                throw new Error('The comments are not showing!');
+            try {
+                const responseComment = await fetch(commentUrl);
+                if (!responseComment.ok) {
+                    console.error('The comments are not showing!');
+                    setComments([]);
+                    setIsLoadingComment(false);
+                    return;
+                }
+                const responseJsonComments = await responseComment.json();
+                const responseData = responseJsonComments._embedded.comments;
+                const loadedComments: CommentModel[] = [];
+                let weightedStarComments: number = 0;
+                for (const key in responseData) {
+                    loadedComments.push({
+                        id: responseData[key].id,
+                        userEmail: responseData[key].userEmail,
+                        date: responseData[key].date,
+                        rating: responseData[key].rating,
+                        pokemonId: responseData[key].pokemonId,
+                        commentDescription: responseData[key].commentDescription
+                    });
+                    weightedStarComments += responseData[key].rating;
+                }
+                if (loadedComments) {
+                    const round = (Math.round((weightedStarComments / loadedComments.length) * 2) / 2).toFixed(1);
+                    setTotalStars(Number(round));
+                }
+                setComments(loadedComments);
+                setIsLoadingComment(false);
+            } catch (error) {
+                console.error(error);
+                setComments([]);
+                setCommentsError('The comments are not showing!');
+                setIsLoadingComment(false);
             }
-
-            const responseJsonComments = await responseComment.json();
-
-            const responseData = responseJsonComments._embedded.comments;
-
-            const loadedComments: CommentModel[] = [];
-
-            let weightedStarComments: number = 0;
-
-            for (const key in responseData) {
-                loadedComments.push({
-                    id: responseData[key].id,
-                    userEmail: responseData[key].userEmail,
-                    date: responseData[key].date,
-                    rating: responseData[key].rating,
-                    pokemonId: responseData[key].pokemonId,
-                    commentDescription: responseData[key].commentDescription
-
-                });
-                weightedStarComments += responseData[key].rating;
-            }
-
-            if (loadedComments) {
-                const round = (Math.round((weightedStarComments / loadedComments.length) * 2) / 2).toFixed(1);
-                setTotalStars(Number(round));
-            }
-
-            setComments(loadedComments);
-            setIsLoadingComment(false);
         };
-
-        fetchComments().catch((error: any) => {
-            setIsLoadingComment(false);
-            setHttpError(error.message);
-        })
-
+        fetchComments();
     }, [isCommentLeft, poketexId]);
-
 
 
 
@@ -171,23 +172,23 @@ export const PoketexPage = () => {
         }
         fetchUserCommentPokemon().catch((error: any) => {
             setIsLoadingUserComment(false);
-            setHttpError(error.message);
+            setCommentsError('Something went wrong!');
         })
     }, [authState, poketexId])
 
 
 
 
-    if (isLoading || isLoadingComment || isLoadingUserComment) {
+    if (isLoading) {
         return (
             <SpinnerLoading />
         )
     }
 
-    if (httpError) {
+    if (poketexError) {
         return (
             <div className='container m-5'>
-                <p>{httpError}</p>
+                <p>{poketexError}</p>
             </div>
         )
     }
@@ -250,9 +251,11 @@ export const PoketexPage = () => {
                         isAuthenticated={authState?.isAuthenticated}
                         isCommentLeft={isCommentLeft}
                         submitComment={submitComment}
+                        isLoadingComment={isLoadingComment}
+                        commentsError={commentsError}
                     />
                     <hr />
-                    <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} />
+                    <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} commentsError={commentsError} />
                 </div>
             </div>
 
@@ -280,9 +283,11 @@ export const PoketexPage = () => {
                     isAuthenticated={authState?.isAuthenticated}
                     isCommentLeft={isCommentLeft}
                     submitComment={submitComment}
+                    isLoadingComment={isLoadingComment}
+                    commentsError={commentsError}
                 />
                 <hr />
-                <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} />
+                <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} commentsError={commentsError} />
             </div>
 
         </div>

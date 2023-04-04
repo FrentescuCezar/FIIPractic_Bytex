@@ -19,13 +19,14 @@ export const SearchPoketexesPage = () => {
     useEffect(() => {
         const fetchPoketex = async () => {
 
-            const baseUrl: string = "http://localhost:8084/api/pokedexes";
+            let baseUrl: string = "http://localhost:8084/api/pokedexes";
             let url: string = ``;
 
             if (searchUrl === '') {
                 url = `${baseUrl}?page=${currentPage - 1}&size=${poketexesPerPage}`;
             } else {
                 let searchWithPage = searchUrl.replace('<pageNumber>', `${currentPage - 1}`);
+                baseUrl = "http://localhost:8084";
                 url = baseUrl + searchWithPage;
             }
 
@@ -40,17 +41,32 @@ export const SearchPoketexesPage = () => {
                 throw new Error('The Servers are down. Please try again later.');
             }
             const responseJson = await response.json();
-            const responseData = responseJson._embedded.pokedexes;
-            setTotalAmountOfPoketexes(responseJson.page.totalElements);
-            setTotalPages(responseJson.page.totalPages);
+
+            let responseData;
+            if (searchUrl === '') {
+                responseData = responseJson._embedded.pokedexes;
+                setTotalAmountOfPoketexes(responseJson.page.totalElements);
+                setTotalPages(responseJson.page.totalPages);
+            } else {
+                responseData = responseJson.content;
+                setTotalAmountOfPoketexes(responseJson.totalElements);
+                setTotalPages(responseJson.totalPages);
+            }
 
 
             const loadedPoketexes: PoketexModel[] = [];
             for (const key in responseData) {
 
                 const data = responseData[key];
-                const selfLink = data._links.self.href;
-                const id = parseInt(selfLink.split('/').pop()); // Extract the ID from the self link
+                let id: number;
+                let selfLink;
+                if (searchUrl === '') {
+                    selfLink = data._links.self.href
+                    id = parseInt(selfLink.split('/').pop());
+                } else {
+                    id = data.id;
+                }
+
 
                 const poketex = new PoketexModel(
                     id, data.name, data.username, // Use the extracted ID here
@@ -106,9 +122,9 @@ export const SearchPoketexesPage = () => {
             setSearchUrl('');
         } else {
             const searchTerms = search.trim().split(/\s+/);
-            const nameQueries = searchTerms.map(term => `name=${term}`).join('&');
+            const nameQueries = searchTerms.map(term => `prompt=${term}`).join('&');
             const promptQueries = searchTerms.map(term => `prompt=${term}`).join('&');
-            setSearchUrl(`/search/findByNameContainingIgnoreCaseOrPromptContainingIgnoreCase?${nameQueries}&${promptQueries}&page=<pageNumber>&size=${poketexesPerPage}`);
+            setSearchUrl(`/api/related?${nameQueries}&page=<pageNumber>&size=${poketexesPerPage}`);
         }
     }
 

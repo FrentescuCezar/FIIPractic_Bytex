@@ -8,11 +8,17 @@ export const CommentBox: React.FC<{
     isAuthenticated: any,
     isCommentLeft: boolean,
     submitComment: any
+    isLoadingComment: boolean
+    commentsError: string | null
 }> = (props) => {
 
 
     function commentRender() {
-        if (props.isAuthenticated && !props.isCommentLeft) {
+        if (props.commentsError !== null) {
+            return (
+                <p>The comments are not available right now!</p>
+            )
+        } else if (props.isAuthenticated && !props.isCommentLeft) {
             return (
                 <LeaveAComment submitComment={props.submitComment} />
             )

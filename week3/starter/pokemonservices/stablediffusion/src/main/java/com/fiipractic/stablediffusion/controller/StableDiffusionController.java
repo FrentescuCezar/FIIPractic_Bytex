@@ -35,21 +35,27 @@ public class StableDiffusionController {
     }
 
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/trial")
     public String trial(@RequestBody ImageRequest imageRequest) throws Exception{
         return stableDiffusionService.sendPrompt(imageRequest.getPrompt(), Optional.ofNullable(imageRequest.getNegativePrompt()), 1, imageRequest.getSteps());
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/pokedex/random")
     public Page<Pokedex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
         Pageable pageable = PageRequest.of(0, limit);
         return stableDiffusionRepository.getRandomPokemons(pageable);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/related")
-    public List<Pokedex> getRelatedPokemons(@RequestParam("prompt") String prompt) {
+    public Page<Pokedex> getRelatedPokemons(@RequestParam("prompt") String prompt,
+                                            @RequestParam("page") int page,
+                                            @RequestParam("size") int size) {
         String joinedPrompt = String.join("|", prompt.replaceAll("[,;]", " ").split("\\s+"));
-        return stableDiffusionRepository.findRelatedPokemons(joinedPrompt);
+        Pageable pageable = PageRequest.of(page, size);
+        return stableDiffusionRepository.findRelatedPokemons(joinedPrompt, pageable);
     }
 
 
