@@ -2,13 +2,19 @@ import { Link } from "react-router-dom";
 import PoketexModel from "../../../models/PoketexModel";
 import { LeaveAComment } from "./LeaveAComment";
 
-export const CommentBox: React.FC<{ poketex: PoketexModel | undefined, mobile: boolean, isAuthenticated: any, isCommentLeft: boolean }> = (props) => {
+export const CommentBox: React.FC<{
+    poketex: PoketexModel | undefined,
+    mobile: boolean,
+    isAuthenticated: any,
+    isCommentLeft: boolean,
+    submitComment: any
+}> = (props) => {
 
 
     function commentRender() {
         if (props.isAuthenticated && !props.isCommentLeft) {
             return (
-                <LeaveAComment />
+                <LeaveAComment submitComment={props.submitComment} />
             )
         } else if (props.isAuthenticated && props.isCommentLeft === true) {
             return (

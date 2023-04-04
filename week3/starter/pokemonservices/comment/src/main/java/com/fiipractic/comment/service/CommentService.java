@@ -27,6 +27,7 @@ public class CommentService {
 
     public void postComment(String userEmail, CommentRequest commentRequest) throws Exception {
         Comment validateComment = commentRepository.findByUserEmailAndPokemonId(userEmail, commentRequest.getPokemonId());
+
         if (validateComment != null) {
             throw new Exception("You have already commented on this pokemon");
         }

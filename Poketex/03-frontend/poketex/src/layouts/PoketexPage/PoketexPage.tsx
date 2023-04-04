@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
+
 import PoketexModel from '../../models/PoketexModel';
+
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
+
 import { CommentBox } from './Components/CommentBox';
 import CommentModel from '../../models/CommentModel';
 import { LatestComments } from './Components/LatestComments';
+import CommentRequestModel from '../../models/CommentRequestModel';
 import { StarsComment } from './Components/StarsComment';
+
 import { useOktaAuth } from '@okta/okta-react';
 
 export const PoketexPage = () => {
@@ -20,7 +26,11 @@ export const PoketexPage = () => {
     const [totalStars, setTotalStars] = useState<number>(0)
     const [isLoadingComment, setIsLoadingComment] = useState<boolean>(true)
 
-    const poketexId = (window.location.pathname).split("/")[2]; //localhost:3000/pokemon/1
+    const poketexId = (window.location.pathname).split("/")[2];
+
+
+    console.log(window.location.pathname)
+    console.log(poketexId)
 
     const [isCommentLeft, setIsCommentLeft] = useState<boolean>(false);
     const [isLoadingUserComment, setIsLoadingUserComment] = useState<boolean>(true);
@@ -80,7 +90,7 @@ export const PoketexPage = () => {
             setIsLoading(false);
             setHttpError(error.message);
         })
-    }, []);
+    }, [poketexId]);
 
 
 
@@ -131,7 +141,7 @@ export const PoketexPage = () => {
             setHttpError(error.message);
         })
 
-    }, [isCommentLeft]);
+    }, [isCommentLeft, poketexId]);
 
 
 
@@ -163,7 +173,7 @@ export const PoketexPage = () => {
             setIsLoadingUserComment(false);
             setHttpError(error.message);
         })
-    }, [authState])
+    }, [authState, poketexId])
 
 
 
@@ -183,6 +193,30 @@ export const PoketexPage = () => {
     }
 
 
+    async function submitComment(starInput: number, commentDescription: string) {
+        let pokemonId: number = 0;
+        if (poketex?.id) {
+            pokemonId = poketex.id;
+        }
+
+        const commentRequestModel = new CommentRequestModel(pokemonId, starInput, commentDescription);
+        const url = `http://localhost:8086/commentapi/comments/`;
+        const requestOptons = {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(commentRequestModel)
+        };
+        console.log(requestOptons)
+        const response = await fetch(url, requestOptons);
+        console.log(response)
+        if (!response.ok) {
+            throw new Error('Something went wrong!');
+        }
+        setIsCommentLeft(true);
+    }
 
 
     return (
@@ -215,6 +249,7 @@ export const PoketexPage = () => {
                         mobile={false}
                         isAuthenticated={authState?.isAuthenticated}
                         isCommentLeft={isCommentLeft}
+                        submitComment={submitComment}
                     />
                     <hr />
                     <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} />
@@ -244,6 +279,7 @@ export const PoketexPage = () => {
                     mobile={false}
                     isAuthenticated={authState?.isAuthenticated}
                     isCommentLeft={isCommentLeft}
+                    submitComment={submitComment}
                 />
                 <hr />
                 <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} />

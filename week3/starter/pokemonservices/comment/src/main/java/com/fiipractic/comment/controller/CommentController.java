@@ -15,6 +15,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @CrossOrigin("http://localhost:3000")
     @PostMapping("/")
     public void postComment(@RequestHeader(value = "Authorization") String token, @RequestBody CommentRequest commentRequest) throws Exception {
         String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");

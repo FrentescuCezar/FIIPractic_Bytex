@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { StarsComment } from "./StarsComment";
 
-export const LeaveAComment: React.FC<{}> = (props) => {
+export const LeaveAComment: React.FC<{ submitComment: any }> = (props) => {
 
     const [starInput, setStarInput] = useState(0);
     const [displayInput, setDisplayInput] = useState(false);
@@ -35,7 +35,6 @@ export const LeaveAComment: React.FC<{}> = (props) => {
             {displayInput &&
                 <form method='POST' action='#'>
                     <hr />
-
                     <div className='mb-3'>
                         <label className='form-label'>
                             Description
@@ -44,9 +43,8 @@ export const LeaveAComment: React.FC<{}> = (props) => {
                             rows={3} onChange={e => setCommentDescription(e.target.value)}>
                         </textarea>
                     </div>
-
                     <div>
-                        <button type='button' className='btn btn-primary mt-3'>Submit Comment</button>
+                        <button type='button' onClick={() => props.submitComment(starInput, commentDescription)} className='btn btn-primary mt-3'>Submit Comment</button>
                     </div>
 
                 </form>
