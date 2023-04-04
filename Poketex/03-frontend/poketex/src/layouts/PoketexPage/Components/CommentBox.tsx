@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import PoketexModel from "../../../models/PoketexModel";
+import { LeaveAComment } from "./LeaveAComment";
 
 export const CommentBox: React.FC<{ poketex: PoketexModel | undefined, mobile: boolean, isAuthenticated: any, isCommentLeft: boolean }> = (props) => {
 
@@ -7,9 +8,7 @@ export const CommentBox: React.FC<{ poketex: PoketexModel | undefined, mobile: b
     function commentRender() {
         if (props.isAuthenticated && !props.isCommentLeft) {
             return (
-                <p>
-                    Leave a comment here!
-                </p>
+                <LeaveAComment />
             )
         } else if (props.isAuthenticated && props.isCommentLeft === true) {
             return (
@@ -30,11 +29,9 @@ export const CommentBox: React.FC<{ poketex: PoketexModel | undefined, mobile: b
     return (
         <div className={props.mobile ? 'card d-flex mt-5' : 'card d-flex mt-5 my-5'}>
             <div className='card-body container'>
-
                 {commentRender()}
                 <hr />
 
-                {/* {isAuthenticated ? <div> : } */}
                 {!props.isAuthenticated
                     ?
                     <div>
