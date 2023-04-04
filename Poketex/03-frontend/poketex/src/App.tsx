@@ -15,6 +15,7 @@ import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { LoginCallback, Security } from '@okta/okta-react';
 import LoginWidget from './Auth/Login';
 import { CommentListPage } from './layouts/PoketexPage/CommentListPage/CommentListPage';
+import MonBuilderPage from './layouts/MonBuilderPage/MonBuilderPage';
 
 const oktaAuth = new OktaAuth(oktaConfig)
 
@@ -58,6 +59,10 @@ export const App = () => {
 
             <Route path='/pokemon/:poketexId'>
               <PoketexPage />
+            </Route>
+
+            <Route path='/monbuilder'>
+              <MonBuilderPage />
             </Route>
 
             <Route path='/pokemystery'>

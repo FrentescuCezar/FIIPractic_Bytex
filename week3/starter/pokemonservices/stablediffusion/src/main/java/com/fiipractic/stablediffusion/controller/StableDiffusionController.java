@@ -3,6 +3,7 @@ package com.fiipractic.stablediffusion.controller;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiipractic.pokemoncatalog.model.Pokedex;
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
+import com.fiipractic.stablediffusion.requestmodel.ImageRequest;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -31,14 +33,9 @@ public class StableDiffusionController {
     }
 
 
-    @GetMapping(value = "/trial")
-    public String trial(@RequestParam String prompt,
-                        @RequestParam(required = false, defaultValue = "") String negativePrompt,
-                        @RequestParam(required = false, defaultValue = "1") int batch_size,
-                        @RequestParam(required = false, defaultValue = "20") int steps,
-                        Model model){
-        System.out.println(stableDiffusionService.sendPrompt(prompt, negativePrompt, batch_size, steps));
-        return "trial";
+    @PostMapping(value = "/trial")
+    public String trial(@RequestBody ImageRequest imageRequest) throws Exception{
+        return stableDiffusionService.sendPrompt(imageRequest.getPrompt(), Optional.ofNullable(imageRequest.getNegativePrompt()), 1, imageRequest.getSteps());
     }
 
     @GetMapping(value = "/pokedex/random")
@@ -46,6 +43,8 @@ public class StableDiffusionController {
         Pageable pageable = PageRequest.of(0, limit);
         return stableDiffusionRepository.getRandomPokemons(pageable);
     }
+
+
 
 
 }

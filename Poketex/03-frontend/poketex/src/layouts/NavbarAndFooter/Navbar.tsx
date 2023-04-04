@@ -47,7 +47,7 @@ export const Navbar: React.FC<{}> = (props) => {
                             <NavLink className="nav-link btn-black-bold" to="/search">Search</NavLink>
                         </li>
                         <li className="nav-item ">
-                            <NavLink className="nav-link btn-black-bold" to="/pokemystery">MonBuilder</NavLink>
+                            <NavLink className="nav-link btn-black-bold" to="/monbuilder">MonBuilder</NavLink>
                         </li>
                         <li className="nav-item ">
                             <NavLink className="nav-link btn-black-bold" to="/pokemystery">PokéMystery</NavLink>

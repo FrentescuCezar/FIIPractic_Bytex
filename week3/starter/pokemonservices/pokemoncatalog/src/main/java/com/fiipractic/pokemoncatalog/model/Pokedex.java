@@ -25,8 +25,11 @@ public class Pokedex {
     private String description;
     @Column(name = "image", columnDefinition = "text")
     private String image;
-    private String seed;
+    private Long seed;
+    @Column(columnDefinition = "text")
     private String prompt;
+    @Column(columnDefinition = "text")
+    private String negativePrompt;
     private Integer steps;
     private Integer generation;
     private List<String> abilities;

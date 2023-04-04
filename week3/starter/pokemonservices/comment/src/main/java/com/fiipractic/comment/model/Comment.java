@@ -27,7 +27,7 @@ public class Comment {
 
     @Column(name="pokemon_id")
     private Integer pokemonId;
-    
+
     @Column(name="comment_description",columnDefinition = "text")
     private String commentDescription;
 

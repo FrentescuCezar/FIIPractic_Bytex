@@ -1,4 +1,4 @@
-class CommentRewquestModel {
+class CommentRequestModel {
     pokemonId: number;
     rating: number;
     commentDescription?: string;
@@ -10,4 +10,4 @@ class CommentRewquestModel {
     }
 }
 
-export default CommentRewquestModel;
+export default CommentRequestModel;
