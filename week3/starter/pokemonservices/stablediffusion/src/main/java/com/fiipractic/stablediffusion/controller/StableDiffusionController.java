@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api")
@@ -44,7 +46,11 @@ public class StableDiffusionController {
         return stableDiffusionRepository.getRandomPokemons(pageable);
     }
 
-
+    @GetMapping("/related")
+    public List<Pokedex> getRelatedPokemons(@RequestParam("prompt") String prompt) {
+        String joinedPrompt = String.join("|", prompt.replaceAll("[,;]", " ").split("\\s+"));
+        return stableDiffusionRepository.findRelatedPokemons(joinedPrompt);
+    }
 
 
 }

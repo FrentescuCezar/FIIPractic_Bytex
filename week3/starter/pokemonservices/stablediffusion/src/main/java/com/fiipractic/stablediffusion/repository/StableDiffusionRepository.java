@@ -21,4 +21,7 @@ public interface StableDiffusionRepository extends JpaRepository<Pokedex, Intege
     @Query(value = "SELECT * FROM pokedex ORDER BY RANDOM()", nativeQuery = true)
     Page<Pokedex> getRandomPokemons(Pageable pageable);
 
+    @Query(value = "SELECT * FROM pokedex p WHERE p.prompt ~* :wordList OR p.name ~* :wordList", nativeQuery = true)
+    List<Pokedex> findRelatedPokemons(@Param("wordList") String wordList);
+
 }
