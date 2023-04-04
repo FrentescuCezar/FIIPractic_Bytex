@@ -41,8 +41,7 @@ export const CommentBox: React.FC<{
                 {!props.isAuthenticated
                     ?
                     <div>
-                        <hr />
-                        <Link to='/login' className='btn btn-success btn-lg'>Sign In</Link>
+                        <Link to='/login' className='btn main-color-gray-button btn-lg'>Sign In</Link>
                     </div>
                     :
                     <div>
