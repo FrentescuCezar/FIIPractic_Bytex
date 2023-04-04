@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import CommentModel from "../../../models/CommentModel";
-import { CommentUtil } from "./Comment";
+import { CommentMessage } from "./CommentMessage";
 
 export const LatestComments: React.FC<{
     comments: CommentModel[]; poketexId: number | undefined, mobile: boolean
@@ -14,11 +14,11 @@ export const LatestComments: React.FC<{
                 {props.comments.length > 0 ?
                     <>
                         {props.comments.slice(0, 3).map((comment) => (
-                            <CommentUtil comment={comment} key={comment.id}></CommentUtil>
+                            <CommentMessage comment={comment} key={comment.id}></CommentMessage>
                         ))}
 
                         <div className='m-3'>
-                            <Link type='button' className='btn main-color btn-md text-white' to='#'>
+                            <Link type='button' className='btn main-color btn-md text-white' to={`/commentList/${props.poketexId}`}>
                                 See all comments
                             </Link>
                         </div>

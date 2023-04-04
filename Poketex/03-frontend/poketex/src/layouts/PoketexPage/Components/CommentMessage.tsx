@@ -1,7 +1,7 @@
 import CommentModel from "../../../models/CommentModel";
 import { StarsComment } from "./StarsComment";
 
-export const CommentUtil: React.FC<{ comment: CommentModel }> = (props) => {
+export const CommentMessage: React.FC<{ comment: CommentModel }> = (props) => {
 
     const date = new Date(props.comment.date);
     const longMonth = date.toLocaleString('default', { month: 'long' });
@@ -32,6 +32,7 @@ export const CommentUtil: React.FC<{ comment: CommentModel }> = (props) => {
                         {props.comment.commentDescription}
                     </p>
                 </div>
+                <hr />
             </div>
         </div>
 
