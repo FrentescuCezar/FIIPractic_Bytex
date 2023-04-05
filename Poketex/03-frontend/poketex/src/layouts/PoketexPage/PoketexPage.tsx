@@ -385,7 +385,7 @@ export const PoketexPage = () => {
                     </div>
                     <div className='col-4 col-md-7 container'>
                         <div className='ml-2'>
-                            <p className='lead'>{sectionedText}</p>
+                            <div className='lead'>{sectionedText}</div>
                         </div>
                     </div>
                     <CommentBox poketex={poketex}
