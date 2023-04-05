@@ -18,8 +18,11 @@ export const MonBuilderPage = () => {
     const [finalPrompt, setFinalPrompt] = useState("");
 
 
+
     const [imageData, setImageData] = useState("");
     const [seed, setSeed] = useState(0);
+    const generation = 0;
+
 
     // 2 Buttons
     const [pokemonName, setPokemonName] = useState("");
@@ -31,6 +34,8 @@ export const MonBuilderPage = () => {
     const [isNameLoading, setIsNameLoading] = useState(false);
     const [isDescriptionLoading, setIsDescriptionLoading] = useState(false);
     const [error, setError] = useState("");
+
+
 
 
     // Image generation
@@ -134,10 +139,10 @@ export const MonBuilderPage = () => {
     console.log(pokemonDescription)
 
 
-    async function submitPokemon(name: string, description: string, prompt: string, image: string, steps: number, seed: number, negativePrompt?: string) {
+    async function submitPokemon(name: string, description: string, prompt: string, image: string, steps: number, seed: number, generation: number, negativePrompt?: string, parent1?: number, parent2?: number) {
 
 
-        const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed);
+        const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed, generation, negativePrompt, parent1, parent2);
 
         console.log(poketexRequestModel)
 
@@ -214,7 +219,7 @@ export const MonBuilderPage = () => {
 
                     {pokemonName && pokemonDescription && (
                         <button
-                            onClick={() => submitPokemon(pokemonName, pokemonDescription, finalPrompt, imageData, steps, seed, negativePrompt)}
+                            onClick={() => submitPokemon(pokemonName, pokemonDescription, finalPrompt, imageData, steps, seed, generation, negativePrompt)}
                         >
                             Submit Pokemon
                         </button>

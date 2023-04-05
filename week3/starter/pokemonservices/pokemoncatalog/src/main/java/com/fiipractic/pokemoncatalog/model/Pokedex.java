@@ -32,6 +32,8 @@ public class Pokedex {
     private String negativePrompt;
     private Integer steps;
     private Integer generation;
+    private Integer parent1;
+    private Integer parent2;
     private List<String> abilities;
     private Integer hp;
     private Integer attack;

@@ -170,10 +170,18 @@ public class StableDiffusionService {
                     .orElse(null));
         }
 
+        if(pokedexRequest.getParent1() != null && pokedexRequest.getParent1().isPresent()){
+            pokedex.setParent1(pokedexRequest.getParent1().orElse(null));
+        }
+
+        if(pokedexRequest.getParent2() != null && pokedexRequest.getParent2().isPresent()){
+            pokedex.setParent1(pokedexRequest.getParent1().orElse(null));
+        }
+
         pokedex.setSteps(pokedexRequest.getSteps());
         pokedex.setSeed(pokedexRequest.getSeed());
         pokedex.setImage(pokedexRequest.getImage());
-        pokedex.setGeneration(0);
+        pokedex.setGeneration(pokedexRequest.getGeneration());
 
         pokedex.setHp(PokemonStatsGenerator.generateHP());
         pokedex.setAttack(PokemonStatsGenerator.generateAttack());

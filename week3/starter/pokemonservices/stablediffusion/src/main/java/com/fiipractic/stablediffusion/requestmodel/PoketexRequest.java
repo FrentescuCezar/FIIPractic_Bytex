@@ -10,6 +10,9 @@ public class PoketexRequest {
     String description;
     String prompt;
     Optional<String> negativePrompt;
+    Optional<Integer> parent1;
+    Optional<Integer> parent2;
+    Integer generation;
     String image;
     Integer steps;
     Long seed;

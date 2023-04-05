@@ -90,6 +90,8 @@ export const PoketexPage = () => {
                 baseTotal: data.baseTotal,
                 baseEggSteps: data.baseEggSteps,
                 experienceGrowth: data.experienceGrowth,
+                parent1: data.parent1,
+                parent2: data.parent2,
             };
 
             setPoketex(loadedPoketex);
@@ -268,7 +270,7 @@ export const PoketexPage = () => {
                     data.abilities, data.type1, data.type2,
                     data.hp, data.attack, data.spAttack,
                     data.defense, data.spDefense, data.speed,
-                    data.baseTotal, data.baseEggSteps, data.experienceGrowth
+                    data.baseTotal, data.baseEggSteps, data.experienceGrowth, data.parent1, data.parent2,
                 );
                 loadedPoketexes.push(poketex);
             }

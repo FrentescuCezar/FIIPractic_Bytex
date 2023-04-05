@@ -68,7 +68,7 @@ export const UserPage = () => {
                     data.abilities, data.type1, data.type2,
                     data.hp, data.attack, data.spAttack,
                     data.defense, data.spDefense, data.speed,
-                    data.baseTotal, data.baseEggSteps, data.experienceGrowth
+                    data.baseTotal, data.baseEggSteps, data.experienceGrowth, data.parent1, data.parent2
                 );
                 loadedPoketexes.push(poketex);
             }
