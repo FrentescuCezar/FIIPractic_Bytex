@@ -52,9 +52,11 @@ export const SearchPoketex: React.FC<{ poketex: PoketexModel }> = (props) => {
                         <h3>
                             {props.poketex.name}
                         </h3>
-                        <h6 className='card-title'>
-                            {props.poketex.username}
-                        </h6>
+                        <Link to={`/user/${props.poketex.username}`}>
+                            <h6 className='card-title'>
+                                {props.poketex.username}
+                            </h6>
+                        </Link>
                         <p className='card-txt'>
                             {formattedDescription}
                         </p>

@@ -31,7 +31,6 @@ export const PokeMysteryPage = () => {
     const [isCorrect, setIsCorrect] = useState<boolean>(false);
 
     const [maskedName, setMaskedName] = useState<string>("");
-    const [maskedUsername, setMaskedUsername] = useState<string>("");
     const [maskedPrompt, setMaskedPrompt] = useState<string>("");
 
     const [animationKey, setAnimationKey] = useState<number>(0);
@@ -44,7 +43,6 @@ export const PokeMysteryPage = () => {
                 const loadedPoketex = await fetchPoketex();
                 setPoketex(loadedPoketex);
                 setMaskedName(maskName(loadedPoketex.name));
-                setMaskedUsername(maskUsername(loadedPoketex.username));
                 setMaskedPrompt(maskPrompt(loadedPoketex.prompt));
                 setIsLoading(false);
             } catch (error: any) {
@@ -70,13 +68,11 @@ export const PokeMysteryPage = () => {
             if (result === "Correct!") {
                 setIsCorrect(true);
                 setMaskedName(poketex.name);
-                setMaskedUsername(poketex.username);
                 setMaskedPrompt(poketex.prompt);
             } else {
                 setRemainingTries(remainingTries - 1);
                 if (remainingTries - 1 === 0) {
                     setMaskedName(poketex.name);
-                    setMaskedUsername(poketex.username);
                     setMaskedPrompt(poketex.prompt);
                 }
             }
@@ -94,7 +90,6 @@ export const PokeMysteryPage = () => {
             const loadedPoketex = await fetchPoketex();
             setPoketex(loadedPoketex);
             setMaskedName(maskName(loadedPoketex.name));
-            setMaskedUsername(maskUsername(loadedPoketex.username));
             setMaskedPrompt(maskPrompt(loadedPoketex.prompt));
             setRemainingTries(3);
             setIsCorrect(false);
@@ -123,7 +118,7 @@ export const PokeMysteryPage = () => {
 
 
 
-   
+
 
 
     return (
@@ -131,7 +126,6 @@ export const PokeMysteryPage = () => {
             <PokeMysteryDesktop
                 poketex={poketex}
                 maskedName={maskedName ?? "?"}
-                maskedUsername={maskedUsername ?? "?"}
                 maskedPrompt={maskedPrompt ?? "?"}
                 formattedDescription={formattedDescription}
                 isCorrect={isCorrect}
@@ -140,7 +134,6 @@ export const PokeMysteryPage = () => {
             <PokeMysteryMobile
                 poketex={poketex}
                 maskedName={maskedName ?? "?"}
-                maskedUsername={maskedUsername ?? "?"}
                 maskedPrompt={maskedPrompt ?? "?"}
                 formattedDescription={formattedDescription}
                 isCorrect={isCorrect}

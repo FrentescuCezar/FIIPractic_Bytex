@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 interface PokeMysteryDesktopProps {
     poketex: any;
     maskedName: string;
-    maskedUsername: string;
     maskedPrompt: string;
     formattedDescription: React.ReactNode;
     isCorrect: boolean;
@@ -15,7 +14,6 @@ interface PokeMysteryDesktopProps {
 export const PokeMysteryDesktop: React.FC<PokeMysteryDesktopProps> = ({
     poketex,
     maskedName,
-    maskedUsername,
     maskedPrompt,
     formattedDescription,
     isCorrect,
@@ -47,7 +45,6 @@ export const PokeMysteryDesktop: React.FC<PokeMysteryDesktopProps> = ({
                 )}
                 <div className="mt-3 text-center">
                     <h1>{maskedName}</h1>
-                    <h5 className="text-primary">{maskedUsername}</h5>
                     <h6>"{maskedPrompt}"</h6>
                 </div>
 

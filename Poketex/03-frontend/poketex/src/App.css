@@ -183,11 +183,10 @@
   background-repeat: no-repeat;
   background-size: 100%;
   background-position: center;
-
-  
-
-  /* set the height based on the width to make it a square */
 }
+
+/* set the height based on the width to make it a square */
+
 
 .homepage-carousel-title {
   display: flex !important;

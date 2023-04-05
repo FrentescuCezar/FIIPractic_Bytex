@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import PoketexModel from "../../../models/PoketexModel";
 
-export const RelatedPoketexes: React.FC<{ poketex: PoketexModel }> = (props) => {
+export const UserPokemons: React.FC<{ poketex: PoketexModel }> = (props) => {
 
     function truncateText(text: string, maxLength: number) {
         if (text.length > maxLength) {
@@ -16,11 +16,11 @@ export const RelatedPoketexes: React.FC<{ poketex: PoketexModel }> = (props) => 
 
 
     return (
-        <div className='col-md-3 col-sm-6 d-inline-flex justify-content-center'>
+        <div className='col-lg-3 col-md-4 col-sm-6 col-12 p-2'>
             <div className='card mt-2 shadow p-3 mb-3 bg-body rounded'>
                 <div className='d-flex flex-column align-items-center justify-content-center'>
                     {props.poketex.image ?
-                        <Link to={`/${props.poketex.id}`}>
+                        <Link to={`/pokemon/${props.poketex.id}`}>
                             <img src={`data:image/png;base64,${props.poketex.image}`}
                                 className='card-img-top'
                                 alt='Pokemon'
@@ -38,11 +38,9 @@ export const RelatedPoketexes: React.FC<{ poketex: PoketexModel }> = (props) => 
                         <h3>
                             {props.poketex.name}
                         </h3>
-                        <Link to={`/user/${props.poketex.username}`}>
-                            <h6 className='card-title'>
-                                {props.poketex.username}
-                            </h6>
-                        </Link>
+                        <h6 className='card-title'>
+                            {props.poketex.username}
+                        </h6>
                         <div>
                             {truncatedDescription}
                         </div>

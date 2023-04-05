@@ -10,6 +10,7 @@ import com.fiipractic.stablediffusion.utils.PokemonStatsGenerator;
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.requestmodel.ImageRequest;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,9 @@ import java.util.regex.Pattern;
 @CrossOrigin(origins = "http://localhost:3000")
 public class StableDiffusionController {
 
+    @Autowired
     private final StableDiffusionService stableDiffusionService;
+
     private final StableDiffusionRepository stableDiffusionRepository;
 
     public StableDiffusionController(StableDiffusionService stableDiffusionService, StableDiffusionRepository stableDiffusionRepository) {
@@ -51,6 +54,15 @@ public class StableDiffusionController {
     public Page<Pokedex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
         Pageable pageable = PageRequest.of(0, limit);
         return stableDiffusionRepository.getRandomPokemons(pageable);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/userPokemons")
+    public Page<Pokedex> getUserPokemons(@RequestParam(value = "username") String username,
+                                         @RequestParam("page") int page,
+                                         @RequestParam("size") int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        return stableDiffusionRepository.findByUsername(username, pageable);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 interface PokeMysteryMobileProps {
     poketex: any;
     maskedName: string;
-    maskedUsername: string;
     maskedPrompt: string;
     formattedDescription: React.ReactNode;
     isCorrect: boolean;
@@ -15,7 +14,6 @@ interface PokeMysteryMobileProps {
 export const PokeMysteryMobile: React.FC<PokeMysteryMobileProps> = ({
     poketex,
     maskedName,
-    maskedUsername,
     maskedPrompt,
     formattedDescription,
     isCorrect,
@@ -48,7 +46,6 @@ export const PokeMysteryMobile: React.FC<PokeMysteryMobileProps> = ({
                 <div className="d-flex flex-column align-items-center">
                     <div className="text-center">
                         <h2>{maskedName}</h2>
-                        <h5 className="text-primary">{maskedUsername}</h5>
                         <h6>"{maskedPrompt}"</h6>
                         <p className="lead">{formattedDescription}</p>
                     </div>

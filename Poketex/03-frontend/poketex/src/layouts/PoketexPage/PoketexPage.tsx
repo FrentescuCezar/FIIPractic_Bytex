@@ -16,6 +16,7 @@ import { useOktaAuth } from '@okta/okta-react';
 import { Pagination } from '../Utils/Pagination';
 import { RelatedPoketexes } from './Components/RelatedPoketexes';
 import { SearchPoketex } from '../SearchPoketexesPage/Components/SearchPoketex';
+import { Link } from 'react-router-dom';
 
 export const PoketexPage = () => {
 
@@ -41,7 +42,8 @@ export const PoketexPage = () => {
 
 
     const [isCommentLeft, setIsCommentLeft] = useState<boolean>(false);
-    const [isLoadingUserComment, setIsLoadingUserComment] = useState<boolean>(true);
+
+    const [firstTimeLoadingThePage, setFirstTimeLoadingThePage] = useState<boolean>(true);
 
 
 
@@ -170,10 +172,8 @@ export const PoketexPage = () => {
                 const userCommentResponseJson = await userComment.json();
                 setIsCommentLeft(userCommentResponseJson);
             }
-            setIsLoadingUserComment(false);
         }
         fetchUserCommentPokemon().catch((error: any) => {
-            setIsLoadingUserComment(false);
             setCommentsError('Something went wrong!');
         })
     }, [authState, poketexId])
@@ -215,7 +215,7 @@ export const PoketexPage = () => {
 
 
 
-
+    //LOAD RELATED POKEMONS
     const [poketexes, setPoketexes] = useState<PoketexModel[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [poketexesPerPage] = useState(8);
@@ -225,7 +225,7 @@ export const PoketexPage = () => {
 
 
     useEffect(() => {
-        const fetchPoketex = async () => {
+        const fetchRelatedPokemons = async () => {
             const serachNameAndPrompt = poketex?.name + ' ' + poketex?.prompt;
             const searchWords = serachNameAndPrompt?.trim().split(/\s+/) ?? [];
             const stopWords = ['a', 'the', 'an', 'and', 'or', 'in', 'on', 'at', 'with', 'by', 'made', 'without'];
@@ -277,11 +277,17 @@ export const PoketexPage = () => {
             setIsLoading(false);
 
         };
-        fetchPoketex().catch((error: any) => {
+        fetchRelatedPokemons().catch((error: any) => {
             setIsLoading(false);
         })
 
-        window.scrollTo(0, 1200);  //THIS IS IF YOU WANT TO SCROLL TO TOP WHEN YOU CHANGE PAGE FGM
+        if (firstTimeLoadingThePage) {
+            setFirstTimeLoadingThePage(false);
+        } else {
+            //window.scrollTo(0, 1200);  //THIS IS IF YOU WANT TO SCROLL TO TOP WHEN YOU CHANGE PAGE FGM
+        }
+
+
 
     }, [currentPage, poketex]);
 
@@ -366,7 +372,9 @@ export const PoketexPage = () => {
                         }
                         <div className='mt-3 text-center'>
                             <h1>{poketex?.name}</h1>
-                            <h5 className='text-primary'>{poketex?.username}</h5>
+                            <Link to={`/user/${poketex?.username}`}>
+                                <h5 className='text-primary'>{poketex?.username}</h5>
+                            </Link>
                             <h6>"{poketex?.prompt}"</h6>
                             <div className="container">
                                 <div className="d-flex flex-row">
@@ -421,7 +429,9 @@ export const PoketexPage = () => {
                 <div className='mt-4'>
                     <div className='ml-2'>
                         <h2>{poketex?.name}</h2>
-                        <h5 className='text-primary'>{poketex?.username}</h5>
+                        <Link to={`/user/${poketex?.username}`}>
+                            <h5 className='text-primary'>{poketex?.username}</h5>
+                        </Link>
                         <div className="d-flex flex-row">
                             <StarsComment rating={totalStars} size={40} />
                         </div>
