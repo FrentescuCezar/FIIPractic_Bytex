@@ -1,7 +1,12 @@
 package com.fiipractic.stablediffusion.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fiipractic.comment.utils.ExtractJWT;
 import com.fiipractic.pokemoncatalog.model.Pokedex;
+
+import com.fiipractic.stablediffusion.requestmodel.PoketexRequest;
+import com.fiipractic.stablediffusion.utils.PokemonStatsGenerator;
+
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.requestmodel.ImageRequest;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
@@ -56,6 +61,51 @@ public class StableDiffusionController {
         String joinedPrompt = String.join("|", prompt.replaceAll("[,;]", " ").split("\\s+"));
         Pageable pageable = PageRequest.of(page, size);
         return stableDiffusionRepository.findRelatedPokemons(joinedPrompt, pageable);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/create")
+    public ResponseEntity<Pokedex> createPokemon(@RequestHeader(value = "Authorization") String token, @RequestBody PoketexRequest pokedexRequest) {
+        try {
+            String username = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+
+
+            Pokedex pokedex = new Pokedex();
+
+            pokedex.setName(pokedexRequest.getName());
+            pokedex.setDescription(pokedexRequest.getDescription());
+            pokedex.setPrompt(pokedexRequest.getPrompt());
+
+            if (pokedexRequest.getNegativePrompt() != null && pokedexRequest.getNegativePrompt().isPresent()) {
+                pokedex.setNegativePrompt(pokedexRequest.getNegativePrompt().map(Object::toString)
+                        .orElse(null));
+            }
+
+            pokedex.setSteps(pokedexRequest.getSteps());
+            pokedex.setSeed(pokedexRequest.getSeed());
+            pokedex.setImage(pokedexRequest.getImage());
+            pokedex.setGeneration(0);
+
+            pokedex.setHp(PokemonStatsGenerator.generateHP());
+            pokedex.setAttack(PokemonStatsGenerator.generateAttack());
+            pokedex.setSpAttack(PokemonStatsGenerator.generateSpecialAttack());
+            pokedex.setDefense(PokemonStatsGenerator.generateDefense());
+            pokedex.setSpDefense(PokemonStatsGenerator.generateSpecialDefense());
+            pokedex.setSpeed(PokemonStatsGenerator.generateSpeed());
+            pokedex.setBaseEggSteps(PokemonStatsGenerator.generateBaseEggSteps());
+            pokedex.setExperienceGrowth(PokemonStatsGenerator.generateExperienceGrowth());
+            pokedex.setBaseTotal(PokemonStatsGenerator.calculateBaseTotal(pokedex.getHp(), pokedex.getAttack(), pokedex.getSpAttack(), pokedex.getSpDefense(), pokedex.getSpeed()));
+            pokedex.setAbilities(PokemonStatsGenerator.generateRandomAbilities());
+            pokedex.setUsername(username);
+
+
+            stableDiffusionRepository.save(pokedex);
+
+            return new ResponseEntity<>(pokedex, HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

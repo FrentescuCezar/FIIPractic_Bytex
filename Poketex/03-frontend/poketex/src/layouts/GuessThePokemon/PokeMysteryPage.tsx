@@ -14,7 +14,12 @@ import { PokeMysteryMobile } from "./Components/PokeMysteryMobile";
 import { RemainedTries } from "./Components/RemainedTries";
 import { GuessInputForm } from "./Components/GuessInputForm";
 
+
+
 export const PokeMysteryPage = () => {
+
+
+
     const [poketex, setPoketex] = useState<PoketexModel>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [httpError, setHttpError] = useState(null);
@@ -115,6 +120,11 @@ export const PokeMysteryPage = () => {
             </div>
         );
     }
+
+
+
+   
+
 
     return (
         <div className="container">

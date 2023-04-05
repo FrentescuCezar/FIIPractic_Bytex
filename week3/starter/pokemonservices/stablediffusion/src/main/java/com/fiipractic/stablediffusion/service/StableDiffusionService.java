@@ -111,18 +111,7 @@ public class StableDiffusionService {
         }
     }
 
-    private List<String> generateRandomAbilities() throws IOException {
-        List<String> abilitiesList = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader("abilities.txt"))) {
-            String abilitiesLine = reader.readLine();
-            String[] abilitiesArray = abilitiesLine.split(",");
-            for (String ability : abilitiesArray) {
-                abilitiesList.add(ability.trim()); // trim removes leading/trailing spaces
-            }
-        }
-        Collections.shuffle(abilitiesList);
-        return abilitiesList.subList(0, 2);
-    }
+
 
 
 }

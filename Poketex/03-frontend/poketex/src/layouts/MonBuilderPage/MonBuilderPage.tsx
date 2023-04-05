@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import ImageRequestModel from "../../models/ImageRequestModel";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
+import PoketexRequestModel from "../../models/PoketexRequestModel";
+
+import { useOktaAuth } from '@okta/okta-react';
+
 
 export const MonBuilderPage = () => {
+
+    const { authState } = useOktaAuth();
+
+
     const [steps, setSteps] = useState(20);
     const [prompt, setPrompt] = useState("");
     const [negativePrompt, setNegativePrompt] = useState("");
@@ -10,7 +18,7 @@ export const MonBuilderPage = () => {
 
 
     const [imageData, setImageData] = useState("");
-    const [seed, setSeed] = useState("");
+    const [seed, setSeed] = useState(0);
 
     // 2 Buttons
     const [pokemonName, setPokemonName] = useState("");
@@ -120,15 +128,34 @@ export const MonBuilderPage = () => {
         submitPrompt(steps, prompt, negativePrompt);
     };
 
-    if (error) {
-        return (
-            <div className="container m-5">
-                <p>{error}</p>
-            </div>
-        );
-    }
 
     console.log(pokemonDescription)
+
+
+    async function submitPokemon(name: string, description: string, prompt: string, image: string, steps: number, seed: number, negativePrompt?: string) {
+
+
+        const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed);
+
+        console.log(poketexRequestModel)
+
+        const url = `http://localhost:8084/api/create`;
+        const requestOptons = {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(poketexRequestModel)
+        };
+        const response = await fetch(url, requestOptons);
+        if (!response.ok) {
+            throw new Error('Something went wrong!');
+        }
+    }
+
+
+
 
     return (
         <div>
@@ -174,6 +201,14 @@ export const MonBuilderPage = () => {
                         {isDescriptionLoading ? "Generating Description..." : "Generate Description"}
                     </button>
                     {pokemonDescription && <p>Pokemon Description: {pokemonDescription}</p>}
+
+                    {pokemonName && pokemonDescription && (
+                        <button
+                            onClick={() => submitPokemon(pokemonName, pokemonDescription, finalPrompt, imageData, steps, seed, negativePrompt)}
+                        >
+                            Submit Pokemon
+                        </button>
+                    )}
                 </div>
             )}
         </div>
