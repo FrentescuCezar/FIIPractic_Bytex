@@ -49,10 +49,10 @@ public class StableDiffusionService {
         return orderedPokemons;
     }
 
-    public String generateTextToImage(String prompt, Optional<String> negativePrompt, int batch_size, int steps) throws JsonProcessingException {
+    public String generateTextToImage(String prompt, Optional<Long> seed,Optional<String> negativePrompt, int batch_size, int steps) throws JsonProcessingException {
         String txt2imgUrl = "http://127.0.0.1:7861/sdapi/v1/txt2img";
 
-        ResponseEntity<String> response = submitTextToImagePost(txt2imgUrl, prompt, negativePrompt, batch_size, steps);
+        ResponseEntity<String> response = submitTextToImagePost(txt2imgUrl, prompt, seed, negativePrompt, batch_size, steps);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             try {
@@ -63,9 +63,9 @@ public class StableDiffusionService {
                 String image = jsonNode.get("images").get(0).asText();
                 String info = jsonNode.get("info").asText();
                 JsonNode infoNode = objectMapper.readTree(info);
-                String seed = infoNode.get("seed").asText();
+                String seed2 = infoNode.get("seed").asText();
 
-                return JsonUtils.createJsonResponse(image, seed, prompt, negativePrompt, steps, objectMapper);
+                return JsonUtils.createJsonResponse(image, seed2, prompt, negativePrompt, steps, objectMapper);
 
             } catch (Exception e) {
                 System.err.println("Error parsing JSON response: " + e.getMessage());
@@ -77,7 +77,7 @@ public class StableDiffusionService {
     }
 
 
-    public static ResponseEntity<String> submitTextToImagePost(String url, String prompt, Optional<String> negativePrompt, int batch_size, int steps) throws JsonProcessingException, JsonProcessingException {
+    public static ResponseEntity<String> submitTextToImagePost(String url, String prompt, Optional<Long> seed ,Optional<String> negativePrompt, int batch_size, int steps) throws JsonProcessingException, JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -85,6 +85,10 @@ public class StableDiffusionService {
         jsonMap.put("prompt", prompt);
         jsonMap.put("batch_size", batch_size);
         jsonMap.put("steps", steps);
+
+        if (seed.isPresent()) {
+            jsonMap.put("seed", seed.get());
+        }
 
         if (negativePrompt.isPresent()) {
             jsonMap.put("negative_prompt", negativePrompt.get());

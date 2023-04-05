@@ -10,5 +10,6 @@ public class TextToImageRequest {
     @Column(name="negative_prompt", columnDefinition = "text")
     private String negativePrompt; // Change this line
     private Integer steps;
+    private Long seed;
 
 }

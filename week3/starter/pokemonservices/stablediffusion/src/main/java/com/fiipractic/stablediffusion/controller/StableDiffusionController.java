@@ -42,14 +42,14 @@ public class StableDiffusionController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/trial")
-    public String trial(@RequestBody TextToImageRequest imageRequest) throws Exception{
-        return stableDiffusionService.generateTextToImage(imageRequest.getPrompt(), Optional.ofNullable(imageRequest.getNegativePrompt()), 1, imageRequest.getSteps());
+    public String trial(@RequestBody TextToImageRequest imageRequest) throws Exception {
+        return stableDiffusionService.generateTextToImage(imageRequest.getPrompt(), Optional.ofNullable(imageRequest.getSeed()), Optional.ofNullable(imageRequest.getNegativePrompt()), 1, imageRequest.getSteps());
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/ImageToImage")
-    public String ImagetoImage(@RequestBody ImageToImageRequest imageRequest) throws Exception{
-        return stableDiffusionService.generateImageToImage(imageRequest.getImage(), imageRequest.getPrompt(),Optional.ofNullable(imageRequest.getNegativePrompt()), imageRequest.getSteps(), imageRequest.getSeed());
+    public String ImagetoImage(@RequestBody ImageToImageRequest imageRequest) throws Exception {
+        return stableDiffusionService.generateImageToImage(imageRequest.getImage(), imageRequest.getPrompt(), Optional.ofNullable(imageRequest.getNegativePrompt()), imageRequest.getSteps(), imageRequest.getSeed());
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -61,7 +61,7 @@ public class StableDiffusionController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/pokedex/random/user")
-    public Page<Pokedex> getRandomPokemonsByUsername(@RequestParam(value="username") String username, @RequestParam(value = "limit") Integer limit) {
+    public Page<Pokedex> getRandomPokemonsByUsername(@RequestParam(value = "username") String username, @RequestParam(value = "limit") Integer limit) {
         Pageable pageable = PageRequest.of(0, limit);
         return stableDiffusionRepository.getRandomPokemonByUsername(username, pageable);
     }
@@ -71,7 +71,7 @@ public class StableDiffusionController {
     public Page<Pokedex> getUserPokemons(@RequestParam(value = "username") String username,
                                          @RequestParam("page") int page,
                                          @RequestParam("size") int size) {
-        Pageable pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page, size);
         return stableDiffusionRepository.findByUsername(username, pageable);
     }
 

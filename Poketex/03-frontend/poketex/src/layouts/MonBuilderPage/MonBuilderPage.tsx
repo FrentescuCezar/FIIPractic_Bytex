@@ -13,6 +13,7 @@ export const MonBuilderPage = () => {
 
     const [steps, setSteps] = useState(20);
     const [prompt, setPrompt] = useState("");
+    const [seedInput, setSeedInput] = useState("");
     const [negativePrompt, setNegativePrompt] = useState("");
     const [finalPrompt, setFinalPrompt] = useState("");
 
@@ -25,6 +26,7 @@ export const MonBuilderPage = () => {
     const [pokemonDescription, setPokemonDescription] = useState("");
 
 
+
     const [isImageLoading, setIsImageLoading] = useState(false);
     const [isNameLoading, setIsNameLoading] = useState(false);
     const [isDescriptionLoading, setIsDescriptionLoading] = useState(false);
@@ -32,9 +34,9 @@ export const MonBuilderPage = () => {
 
 
     // Image generation
-    async function submitPrompt(steps: number, prompt: string, negativePrompt?: string) {
+    async function submitPrompt(steps: number, prompt: string, seed?: number, negativePrompt?: string) {
         setIsImageLoading(true);
-        const imageRequestModel = new ImageRequestModel(steps, prompt, negativePrompt);
+        const imageRequestModel = new ImageRequestModel(steps, prompt, seed, negativePrompt);
         const url = `http://localhost:8084/api/trial`;
         const requestOptions = {
             method: "POST",
@@ -125,7 +127,7 @@ export const MonBuilderPage = () => {
         setFinalPrompt(prompt);
         setPokemonDescription("");
         setPokemonName("");
-        submitPrompt(steps, prompt, negativePrompt);
+        submitPrompt(steps, prompt, seedInput ? parseInt(seedInput) : undefined, negativePrompt);
     };
 
 
@@ -169,6 +171,14 @@ export const MonBuilderPage = () => {
                     id="negativePrompt"
                     value={negativePrompt}
                     onChange={(e) => setNegativePrompt(e.target.value)}
+                />
+            </div>
+            <div>
+                <label htmlFor="seed">Seed (optional):</label>
+                <textarea
+                    id="seed"
+                    value={seedInput}
+                    onChange={(e) => setSeedInput(e.target.value)}
                 />
             </div>
             <div>
