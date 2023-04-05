@@ -161,36 +161,6 @@ export const SearchPoketexesPage = () => {
                                 </button>
                             </div>
                         </div>
-                        <div className='col-4'>
-                            <div className='dropdown'>
-                                <button className='btn btn-secondary dropdown-toggle' type='button'
-                                    id='dropdownMenuButton1' data-bs-toggle='dropdown' aria-expanded='false'>
-                                    Category
-                                </button>
-                                <ul className='dropdown-menu' aria-labelledby='dropdownMenuButton1'>
-                                    <li>
-                                        <a className='dropdown-item' href='#'>
-                                            All
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className='dropdown-item' href='#'>
-                                            Jeg
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className='dropdown-item' href='#'>
-                                            Cacat
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className='dropdown-item' href='#'>
-                                            Pisat
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                     <div className='mt-3'>
                         <h5> Number of Results: ({totalAmountOfPoketexes})</h5>

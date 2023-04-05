@@ -22,6 +22,9 @@ public interface StableDiffusionRepository extends JpaRepository<Pokedex, Intege
     @Query(value = "SELECT * FROM pokedex ORDER BY RANDOM()", nativeQuery = true)
     Page<Pokedex> getRandomPokemons(Pageable pageable);
 
+    @Query(value = "SELECT * FROM pokedex WHERE username =:username ORDER BY RANDOM()", nativeQuery = true)
+    Page<Pokedex> getRandomPokemonByUsername(String username, Pageable pageable);
+
     @CrossOrigin(origins = "http://localhost:3000")
     Page<Pokedex> findByUsername(String username, Pageable pageable);
 

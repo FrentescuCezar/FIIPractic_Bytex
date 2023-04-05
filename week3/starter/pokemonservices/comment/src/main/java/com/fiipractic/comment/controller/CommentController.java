@@ -5,6 +5,8 @@ import com.fiipractic.comment.service.CommentService;
 import com.fiipractic.comment.utils.ExtractJWT;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/commentapi/comments")
@@ -36,6 +38,11 @@ public class CommentController {
         }
 
         return commentService.userCommentAlreadyExists(userEmail, pokemonId);
+    }
+
+    @GetMapping("/best-rated-pokemon-ids")
+    public List<Integer> getBestRatedPokemonIds() {
+        return commentService.getBestRatedPokemonIds();
     }
 
 }

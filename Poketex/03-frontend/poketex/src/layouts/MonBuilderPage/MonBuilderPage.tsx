@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import ImageRequestModel from "../../models/ImageRequestModel";
+import ImageRequestModel from "../../models/TextToImageRequestModel";
 import { SpinnerLoading } from "../Utils/SpinnerLoading";
 import PoketexRequestModel from "../../models/PoketexRequestModel";
 

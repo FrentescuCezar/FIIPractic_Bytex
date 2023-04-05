@@ -1,4 +1,4 @@
-class ImageRequestModel {
+class TextToImageRequestModel {
 
     prompt?: string;
     commentDescription?: string;
@@ -12,4 +12,4 @@ class ImageRequestModel {
     }
 }
 
-export default ImageRequestModel;
+export default TextToImageRequestModel;

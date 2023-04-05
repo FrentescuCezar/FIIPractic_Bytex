@@ -185,6 +185,32 @@
   background-position: center;
 }
 
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 3px solid #000000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circle-toggle {
+  width: 100%;
+  height: 100%;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.circle-toggle:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 /* set the height based on the width to make it a square */
 
 

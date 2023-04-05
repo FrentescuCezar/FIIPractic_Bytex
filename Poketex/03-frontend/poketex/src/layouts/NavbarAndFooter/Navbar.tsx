@@ -4,11 +4,19 @@ import { Link, NavLink } from 'react-router-dom';
 
 import { useOktaAuth } from '@okta/okta-react';
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
+import NavBarUserCircle from './NavBarUserCircle';
+
+import jwt_decode from 'jwt-decode';
 
 
+interface JwtPayload {
+    sub: string;
+
+}
 
 
 export const Navbar: React.FC<{}> = (props) => {
+
 
     const { oktaAuth, authState } = useOktaAuth();
 
@@ -17,8 +25,7 @@ export const Navbar: React.FC<{}> = (props) => {
     }
 
     const handleLogout = async () => oktaAuth.signOut();
-
-    //console.log(authState.accessToken.accessToken);
+    const JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
 
 
     return (
@@ -57,7 +64,8 @@ export const Navbar: React.FC<{}> = (props) => {
                         ?
                         <Link type='button' className="btn btn-outline-dark mx-5 btn-red-hover" to='/login'>Sign In</Link>
                         :
-                        <button className='btn btn-outline-dark mx-5 btn-red-hover' onClick={handleLogout}>Logout</button>
+                        //<button className='btn btn-outline-dark mx-5 btn-red-hover' onClick={handleLogout}>Logout</button>
+                        <NavBarUserCircle username={JWTDecoded.sub} onLogout={handleLogout} />
                     }
                 </div>
             </div>

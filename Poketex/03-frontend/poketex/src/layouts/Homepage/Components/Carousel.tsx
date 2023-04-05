@@ -12,50 +12,45 @@ export const Carousel = () => {
     const [httpError, setHttpError] = useState(null)
 
     useEffect(() => {
-        const fetchPoketex = async () => {
+        const fetchBestRatedPokemons = async () => {
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+            const pokemonIdsUrl: string =
+                "http://localhost:8086/commentapi/comments/best-rated-pokemon-ids";
+            const pokemonIdsResponse = await fetch(pokemonIdsUrl);
 
-            const url: string = "http://localhost:8084/api/pokedexes";
-            console.log('Request URL:', url); // Log the request URL
-            const response = await fetch(url, {
-                method: 'GET',
+            if (!pokemonIdsResponse.ok) {
+                throw new Error("Something went wrong!");
+            }
+            const pokemonIds = await pokemonIdsResponse.json();
+
+
+            const pokemonDetailsUrl: string =
+                "http://localhost:8084/api/pokemon-list";
+            const pokemonDetailsResponse = await fetch(pokemonDetailsUrl, {
+                method: "POST",
                 headers: {
-                    accept: 'application/json',
+                    "Content-Type": "application/json",
+                    accept: "application/json",
                 },
+                body: JSON.stringify(pokemonIds),
             });
 
-            console.log('Response:', response); // Log the response object
-
-            if (!response.ok) {
-                throw new Error('Something went wrong!');
+            if (!pokemonDetailsResponse.ok) {
+                throw new Error("Something went wrong!");
             }
-            const responseJson = await response.json();
-            const responseData = responseJson._embedded.pokedexes;
+            const pokemonDetails = await pokemonDetailsResponse.json();
 
-            const loadedPoketexes: PoketexModel[] = [];
-            for (const key in responseData) {
-                const data = responseData[key];
-                const poketex = new PoketexModel(
-                    data.id, data.name, data.username,
-                    data.description, data.image, data.seed,
-                    data.prompt, data.steps, data.generation,
-                    data.abilities, data.type1, data.type2,
-                    data.hp, data.attack, data.spAttack,
-                    data.defense, data.spDefense, data.speed,
-                    data.baseTotal, data.baseEggSteps, data.experienceGrowth
-                );
-                loadedPoketexes.push(poketex);
-            }
+            console.log(pokemonDetails);
 
-            setPoketexes(loadedPoketexes);
+            setPoketexes(pokemonDetails);
             setIsLoading(false);
-
         };
-        fetchPoketex().catch((error: any) => {
+
+        fetchBestRatedPokemons().catch((error: any) => {
             setIsLoading(false);
             setHttpError(error.message);
-        })
+        });
     }, []);
 
 
@@ -74,6 +69,25 @@ export const Carousel = () => {
     }
 
 
+    //Only take 3 pokemons per carousel item
+    const carouselItemCount = Math.floor(poketexes.length / 3);
+    const carouselItems = [];
+    for (let i = 0; i < carouselItemCount; i++) {
+        carouselItems.push(
+            <div className={`carousel-item ${i === 0 ? "active" : ""}`}>
+                <div className="row d-flex justify-content-center align-items-center">
+                    {
+                        poketexes.slice(i * 3, i * 3 + 3).map((poketex: PoketexModel) => {
+                            return (
+                                <ReturnPokemon key={poketex.id} poketex={poketex} />
+                            );
+                        })
+                    }
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className='container mt-5' style={{ height: 580 }}>
             <div className='homepage-carousel-title'>
@@ -84,39 +98,7 @@ export const Carousel = () => {
                 data-bs-interval='false'>
                 {/* Desktop*/}
                 <div className='carousel-inner'>
-                    <div className='carousel-item active'>
-                        <div className='row d-flex justify-content-center align-items-center'>
-                            {
-                                poketexes.slice(0, 3).map((poketex: PoketexModel) => {
-                                    return (
-                                        <ReturnPokemon key={poketex.id} poketex={poketex} />
-                                    )
-                                })
-                            }
-                        </div>
-                    </div>
-                    <div className='carousel-item '>
-                        <div className='row d-flex justify-content-center align-items-center'>
-                            {
-                                poketexes.slice(3, 6).map((poketex: PoketexModel) => {
-                                    return (
-                                        <ReturnPokemon key={poketex.id} poketex={poketex} />
-                                    )
-                                })
-                            }
-                        </div>
-                    </div>
-                    <div className='carousel-item'>
-                        <div className='row d-flex justify-content-center align-items-center'>
-                            {
-                                poketexes.slice(6, 9).map((poketex: PoketexModel) => {
-                                    return (
-                                        <ReturnPokemon key={poketex.id} poketex={poketex} />
-                                    )
-                                })
-                            }
-                        </div>
-                    </div>
+                    {carouselItems}
                 </div>
                 <button className='carousel-control-prev'
                     type='button'

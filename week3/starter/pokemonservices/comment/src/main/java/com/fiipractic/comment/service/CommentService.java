@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -25,6 +27,12 @@ public class CommentService {
     public CommentService() {
     }
 
+    public List<Integer> getBestRatedPokemonIds() {
+        List<Object[]> results = commentRepository.findBestRatedPokemonIds();
+        return results.stream()
+                .map(result -> (Integer) result[0])
+                .collect(Collectors.toList());
+    }
     public void postComment(String userEmail, CommentRequest commentRequest) throws Exception {
         Comment validateComment = commentRepository.findByUserEmailAndPokemonId(userEmail, commentRequest.getPokemonId());
 
