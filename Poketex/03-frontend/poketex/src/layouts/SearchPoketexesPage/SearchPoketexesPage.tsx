@@ -4,6 +4,8 @@ import { SpinnerLoading } from '../Utils/SpinnerLoading'
 import { SearchPoketex } from './Components/SearchPoketex'
 import { Pagination } from '../Utils/Pagination'
 
+
+
 export const SearchPoketexesPage = () => {
     const [poketexes, setPoketexes] = useState<PoketexModel[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -52,6 +54,7 @@ export const SearchPoketexesPage = () => {
                 setTotalAmountOfPoketexes(responseJson.totalElements);
                 setTotalPages(responseJson.totalPages);
             }
+
 
 
             const loadedPoketexes: PoketexModel[] = [];
@@ -121,10 +124,11 @@ export const SearchPoketexesPage = () => {
         if (search === '') {
             setSearchUrl('');
         } else {
-            const searchTerms = search.trim().split(/\s+/);
-            const nameQueries = searchTerms.map(term => `prompt=${term}`).join('&');
-            const promptQueries = searchTerms.map(term => `prompt=${term}`).join('&');
-            setSearchUrl(`/api/related?${nameQueries}&page=<pageNumber>&size=${poketexesPerPage}`);
+            const searchWords = search.trim().split(/\s+/);
+            const stopwords = ['a', 'the', 'an', 'and', 'or', 'in', 'on', 'at', 'with', 'by', 'made', 'without'];
+            const filteredWords = searchWords.filter(word => !stopwords.includes(word.toLowerCase()));
+            console.log(`/api/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
+            setSearchUrl(`/api/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
         }
     }
 

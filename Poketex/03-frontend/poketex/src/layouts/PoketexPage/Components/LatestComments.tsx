@@ -36,8 +36,18 @@ export const LatestComments: React.FC<{
                                     No comments yet. Rip.
                                 </p>
                             </div>
+
                         }
+
+
                     </div>
+                    {
+                        props.comments.length > 0
+                            ?
+                            <></>
+                            :
+                            <hr />
+                    }
                 </div>
             )
         }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
 
 import PoketexModel from '../../models/PoketexModel';
 
@@ -13,7 +12,13 @@ import { StarsComment } from './Components/StarsComment';
 
 import { useOktaAuth } from '@okta/okta-react';
 
+
+import { Pagination } from '../Utils/Pagination';
+import { RelatedPoketexes } from './Components/RelatedPoketexes';
+import { SearchPoketex } from '../SearchPoketexesPage/Components/SearchPoketex';
+
 export const PoketexPage = () => {
+
 
     const { authState } = useOktaAuth();
 
@@ -35,16 +40,13 @@ export const PoketexPage = () => {
     const poketexId = (window.location.pathname).split("/")[2];
 
 
-    console.log(window.location.pathname)
-    console.log(poketexId)
-
     const [isCommentLeft, setIsCommentLeft] = useState<boolean>(false);
     const [isLoadingUserComment, setIsLoadingUserComment] = useState<boolean>(true);
 
 
 
 
-
+    //Load the pokemon info
     useEffect(() => {
         const fetchPoketex = async () => {
 
@@ -102,6 +104,7 @@ export const PoketexPage = () => {
 
 
 
+    // Load all comments
     useEffect(() => {
         const fetchComments = async () => {
             const commentUrl: string = 'http://localhost:8086/commentapi/comments/search/findByPokemonId?pokemonId=' + poketexId;
@@ -148,6 +151,7 @@ export const PoketexPage = () => {
 
 
 
+    // Load if user has left a comment
     useEffect(() => {
         const fetchUserCommentPokemon = async () => {
             if (authState && authState.isAuthenticated) {
@@ -164,8 +168,6 @@ export const PoketexPage = () => {
                     throw new Error('Something went wrong!');
                 }
                 const userCommentResponseJson = await userComment.json();
-                console.log(authState)
-                console.log(userCommentResponseJson)
                 setIsCommentLeft(userCommentResponseJson);
             }
             setIsLoadingUserComment(false);
@@ -177,21 +179,6 @@ export const PoketexPage = () => {
     }, [authState, poketexId])
 
 
-
-
-    if (isLoading) {
-        return (
-            <SpinnerLoading />
-        )
-    }
-
-    if (poketexError) {
-        return (
-            <div className='container m-5'>
-                <p>{poketexError}</p>
-            </div>
-        )
-    }
 
 
     async function submitComment(starInput: number, commentDescription: string) {
@@ -210,14 +197,144 @@ export const PoketexPage = () => {
             },
             body: JSON.stringify(commentRequestModel)
         };
-        console.log(requestOptons)
         const response = await fetch(url, requestOptons);
-        console.log(response)
         if (!response.ok) {
             throw new Error('Something went wrong!');
         }
         setIsCommentLeft(true);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    const [poketexes, setPoketexes] = useState<PoketexModel[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [poketexesPerPage] = useState(8);
+    const [totalAmountOfPoketexes, setTotalAmountOfPoketexes] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+
+
+
+    useEffect(() => {
+        const fetchPoketex = async () => {
+            const serachNameAndPrompt = poketex?.name + ' ' + poketex?.prompt;
+            const searchWords = serachNameAndPrompt?.trim().split(/\s+/) ?? [];
+            const stopWords = ['a', 'the', 'an', 'and', 'or', 'in', 'on', 'at', 'with', 'by', 'made', 'without'];
+            const filteredPrompt = searchWords.filter(word => !stopWords.includes(word.toLowerCase()));
+
+
+            let baseUrl: string = `http://localhost:8084/api/related?prompt=${filteredPrompt}`;
+            const url: string = `${baseUrl}&page=${currentPage - 1}&size=${poketexesPerPage}`;
+
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('The Servers are down. Please try again later.');
+            }
+            const responseJson = await response.json();
+
+            let responseData;
+
+            responseData = responseJson.content;
+            setTotalAmountOfPoketexes(responseJson.totalElements);
+            setTotalPages(responseJson.totalPages);
+
+
+
+            const loadedPoketexes: PoketexModel[] = [];
+            for (const key in responseData) {
+
+                const data = responseData[key];
+                const id: number = data.id;
+
+                const poketex = new PoketexModel(
+                    id, data.name, data.username,
+                    data.description, data.image, data.seed,
+                    data.prompt, data.steps, data.generation,
+                    data.abilities, data.type1, data.type2,
+                    data.hp, data.attack, data.spAttack,
+                    data.defense, data.spDefense, data.speed,
+                    data.baseTotal, data.baseEggSteps, data.experienceGrowth
+                );
+                loadedPoketexes.push(poketex);
+            }
+
+            setPoketexes(loadedPoketexes);
+            setIsLoading(false);
+
+        };
+        fetchPoketex().catch((error: any) => {
+            setIsLoading(false);
+        })
+
+        window.scrollTo(0, 1200);  //THIS IS IF YOU WANT TO SCROLL TO TOP WHEN YOU CHANGE PAGE FGM
+
+    }, [currentPage, poketex]);
+
+
+
+    const indexOfLastPoketex: number = currentPage * poketexesPerPage;
+    const indexOfFirstPoketex: number = indexOfLastPoketex - poketexesPerPage;
+
+    let lastItem = poketexesPerPage * currentPage <= totalAmountOfPoketexes ?
+        poketexesPerPage * currentPage : totalAmountOfPoketexes;
+
+    const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    if (isLoading) {
+        return (
+            <SpinnerLoading />
+        )
+    }
+
+    if (poketexError) {
+        return (
+            <div className='container m-5'>
+                <p>{poketexError}</p>
+            </div>
+        )
+    }
+
 
 
     return (
@@ -254,8 +371,24 @@ export const PoketexPage = () => {
                         isLoadingComment={isLoadingComment}
                         commentsError={commentsError}
                     />
-                    <hr />
+
                     <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} commentsError={commentsError} />
+                    {/* COPY PASTE S-A INTAMPLAT AICI*/}
+                    <div className='my-4'>
+
+                    </div>
+                    <div className='mt-3'>
+                        <h5> Number of Related Pokemons: ({totalAmountOfPoketexes})</h5>
+                    </div>
+                    <p>
+                        {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfPoketexes} items:
+                    </p>
+                    {poketexes.map(poketex => (
+                        <RelatedPoketexes poketex={poketex} key={poketex.id} />
+                    ))}
+                    {totalPages > 1 &&
+                        <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
+                    }
                 </div>
             </div>
 
@@ -288,6 +421,20 @@ export const PoketexPage = () => {
                 />
                 <hr />
                 <LatestComments comments={comments} poketexId={poketex?.id} mobile={false} commentsError={commentsError} />
+
+                {/* COPY PASTE S-A INTAMPLAT AICI*/}
+                <div className='mt-3'>
+                    <h5> Number of Related Pokemons: ({totalAmountOfPoketexes})</h5>
+                </div>
+                <p>
+                    {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfPoketexes} items:
+                </p>
+                {poketexes.map(poketex => (
+                    <RelatedPoketexes poketex={poketex} key={poketex.id} />
+                ))}
+                {totalPages > 1 &&
+                    <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
+                }
             </div>
 
         </div>

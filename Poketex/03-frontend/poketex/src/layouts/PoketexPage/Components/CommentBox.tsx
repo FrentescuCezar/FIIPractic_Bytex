@@ -39,7 +39,7 @@ export const CommentBox: React.FC<{
 
 
     return (
-        <div className={props.mobile ? 'card d-flex mt-5' : 'card d-flex mt-5 my-5'}>
+        <div className={props.mobile ? 'card d-flex mt-5' : 'card d-flex mt-5 my-3'}>
             <div className='card-body container'>
                 {commentRender()}
                 <hr />

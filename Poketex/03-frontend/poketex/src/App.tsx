@@ -46,19 +46,10 @@ export const App = () => {
 
             <Route path='/home' exact>
               <Homepage />
-
             </Route>
 
-            <Route path='/commentList/:poketexId'>
-              <CommentListPage />
-            </Route>
-
-            <Route path='/search'>
+            <Route path='/search' exact>
               <SearchPoketexesPage />
-            </Route>
-
-            <Route path='/pokemon/:poketexId'>
-              <PoketexPage />
             </Route>
 
             <Route path='/monbuilder'>
@@ -74,6 +65,30 @@ export const App = () => {
             />
 
             <Route path='/login/callback' component={LoginCallback} />
+
+            <Route
+              path="/:poketexId"
+              exact
+              render={({ match }) => (
+                <Redirect to={`/pokemon/${match.params.poketexId}`} />
+              )}
+            />
+
+
+            <Route path='/commentList/:poketexId'>
+              <CommentListPage />
+            </Route>
+
+
+
+            <Route path='/pokemon/:poketexId'>
+              <PoketexPage />
+            </Route>
+
+
+
+
+
 
           </Switch>
         </div>

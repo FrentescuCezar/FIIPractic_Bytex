@@ -108,16 +108,6 @@ export const MonBuilderPage = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
     const handleSubmit = () => {
         if (!prompt) {
             setError("Prompt is required.");
@@ -127,7 +117,7 @@ export const MonBuilderPage = () => {
         setFinalPrompt(prompt);
         setPokemonDescription("");
         setPokemonName("");
-        submitPrompt(steps, finalPrompt, negativePrompt);
+        submitPrompt(steps, prompt, negativePrompt);
     };
 
     if (error) {
