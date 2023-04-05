@@ -337,6 +337,23 @@ export const PoketexPage = () => {
 
 
 
+
+    const paragraphs = poketex?.description.split('.').filter(Boolean) ?? [];
+    const numParagraphs = paragraphs.length;
+    const paragraphsPerSection = Math.ceil(numParagraphs / 3);
+
+    const sectionedText = [];
+    for (let i = 0; i < numParagraphs; i += paragraphsPerSection) {
+        sectionedText.push(
+            <div key={i} style={{ marginBottom: "20px" }}>
+                {paragraphs.slice(i, i + paragraphsPerSection).join('. ')}.
+            </div>
+        );
+    }
+
+
+
+
     return (
         <div>
             <div className='container d-none d-lg-block'>
@@ -360,7 +377,7 @@ export const PoketexPage = () => {
                     </div>
                     <div className='col-4 col-md-7 container'>
                         <div className='ml-2'>
-                            <p className='lead'>{poketex?.description}</p>
+                            <p className='lead'>{sectionedText}</p>
                         </div>
                     </div>
                     <CommentBox poketex={poketex}

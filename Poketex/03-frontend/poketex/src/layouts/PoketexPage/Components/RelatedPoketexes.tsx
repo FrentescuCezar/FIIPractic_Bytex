@@ -11,18 +11,9 @@ export const RelatedPoketexes: React.FC<{ poketex: PoketexModel }> = (props) => 
         }
     }
 
-    function formatTextWithNewlines(text: string) {
-        return text.split('\n').map((line, index) => (
-            <span key={index}>
-                {line}
-                <br />
-            </span>
-        ));
-    }
-
     const MAX_LENGTH_DESCRIPTION = 170;
     const truncatedDescription = truncateText(props.poketex.description, MAX_LENGTH_DESCRIPTION);
-    const formattedDescription = formatTextWithNewlines(truncatedDescription);
+
 
     return (
         <div className='col-md-3 col-sm-6 d-inline-flex justify-content-center'>
@@ -51,7 +42,7 @@ export const RelatedPoketexes: React.FC<{ poketex: PoketexModel }> = (props) => 
                             {props.poketex.username}
                         </h6>
                         <div>
-                            {formattedDescription}
+                            {truncatedDescription}
                         </div>
                         <Link className='btn main-color-gray-button btn-m' to={`/pokemon/${props.poketex.id}`}>
                             View Details
