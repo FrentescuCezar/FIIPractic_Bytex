@@ -25,7 +25,7 @@ public interface StableDiffusionRepository extends JpaRepository<Pokedex, Intege
     @CrossOrigin(origins = "http://localhost:3000")
     Page<Pokedex> findByUsername(String username, Pageable pageable);
 
-    @Query(value = "SELECT * FROM pokedex p WHERE p.prompt ~* :wordList OR p.name ~* :wordList", nativeQuery = true)
+    @Query(value = "SELECT * FROM pokedex p WHERE p.prompt ~* :wordList OR p.name ~* :wordList OR p.username = ANY(string_to_array(:wordList, ','))", nativeQuery = true)
     Page<Pokedex> findRelatedPokemons(@Param("wordList") String wordList, Pageable pageable);
 
 }

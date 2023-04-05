@@ -38,13 +38,10 @@ export const UserPokemons: React.FC<{ poketex: PoketexModel }> = (props) => {
                         <h3>
                             {props.poketex.name}
                         </h3>
-                        <h6 className='card-title'>
-                            {props.poketex.username}
-                        </h6>
                         <div>
                             {truncatedDescription}
                         </div>
-                        <Link className='btn main-color-gray-button btn-m' to={`/pokemon/${props.poketex.id}`}>
+                        <Link className='btn main-color-gray-button btn-m my-2' to={`/pokemon/${props.poketex.id}`}>
                             View Details
                         </Link>
                     </div>
