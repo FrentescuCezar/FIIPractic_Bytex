@@ -5,6 +5,9 @@ import PoketexRequestModel from "../../models/PoketexRequestModel";
 
 import { useOktaAuth } from '@okta/okta-react';
 
+import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
+
+
 
 export const MonBuilderPage = () => {
 
@@ -163,72 +166,95 @@ export const MonBuilderPage = () => {
 
 
 
-
     return (
-        <div>
-            <div>
-                <label htmlFor="prompt">Prompt:</label>
-                <textarea id="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
-            </div>
-            <div>
-                <label htmlFor="negativePrompt">Negative Prompt (optional):</label>
-                <textarea
-                    id="negativePrompt"
-                    value={negativePrompt}
-                    onChange={(e) => setNegativePrompt(e.target.value)}
-                />
-            </div>
-            <div>
-                <label htmlFor="seed">Seed (optional):</label>
-                <textarea
-                    id="seed"
-                    value={seedInput}
-                    onChange={(e) => setSeedInput(e.target.value)}
-                />
-            </div>
-            <div>
-                <label htmlFor="steps">Steps: {steps}</label>
-                <input
-                    id="steps"
-                    type="range"
-                    min="20"
-                    max="50"
-                    value={steps}
-                    onChange={(e) => setSteps(Number(e.target.value))}
-                />
-            </div>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <button onClick={handleSubmit} disabled={isImageLoading}>
-                {isImageLoading ? "Generating..." : "Generate Pokemon"}
-            </button>
-            {imageData && (
-                <div>
-                    <h3>Generated Pokemon</h3>
-                    <img src={`data:image/png;base64,${imageData}`} alt="Generated Pokemon" />
-                    <p>Seed: {seed}</p>
-                    <p>Prompt: {prompt}</p>
-                    <p>Steps: {steps}</p>
-                    <button onClick={() => fetchPokemonName(finalPrompt)} disabled={isNameLoading}>
-                        {isNameLoading ? "Generating Name..." : "Generate Name"}
-                    </button>
-                    {pokemonName && <p>Pokemon Name: {pokemonName}</p>}
-                    <button onClick={() => fetchPokemonDescription(finalPrompt)} disabled={isDescriptionLoading}>
-                        {isDescriptionLoading ? "Generating Description..." : "Generate Description"}
-                    </button>
-                    {pokemonDescription && <p>Pokemon Description: {pokemonDescription}</p>}
+        <Container>
+            <Row>
+                <Col>
+                    <Form>
+                        <Form.Group controlId="prompt">
+                            <Form.Label>Prompt:</Form.Label>
+                            <Form.Control as="textarea" value={prompt} onChange={(e) => setPrompt(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group controlId="negativePrompt">
+                            <Form.Label>Negative Prompt (optional):</Form.Label>
+                            <Form.Control as="textarea" value={negativePrompt} onChange={(e) => setNegativePrompt(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group controlId="seed">
+                            <Form.Label>Seed (optional):</Form.Label>
+                            <Form.Control as="textarea" value={seedInput} onChange={(e) => setSeedInput(e.target.value)} />
+                        </Form.Group>
+                        <Form.Group controlId="steps">
+                            <Form.Label>Steps: {steps}</Form.Label>
+                            <Form.Control
+                                type="range"
+                                min="20"
+                                max="50"
+                                value={steps}
+                                onChange={(e) => setSteps(Number(e.target.value))}
+                                className="custom-slider"
+                            />
+                        </Form.Group>
+                        {error && <p className="text-danger">{error}</p>}
+                        <Button onClick={handleSubmit} disabled={isImageLoading}>
+                            {isImageLoading ? "Generating..." : "Generate Pokemon"}
+                        </Button>
+                        {isImageLoading && (
+                            <div className="d-inline-block ml-2">
+                                <SpinnerLoading />
+                            </div>
+                        )}
+                    </Form>
+                    {imageData && (
+                        <Row>
+                            <Col>
+                                <div className='my-5'>
+                                    <Button onClick={() => fetchPokemonName(finalPrompt)} disabled={isNameLoading}>
+                                        {isNameLoading ? "Generating Name..." : "Generate Name"}
+                                    </Button>
+                                    {isNameLoading ? (
+                                        <div className="mt-2">
+                                            <SpinnerLoading />
+                                        </div>
+                                    ) : (
+                                        pokemonName && <p>Pokemon Name: {pokemonName}</p>
+                                    )}
+                                </div>
 
-                    {pokemonName && pokemonDescription && (
-                        <button
-                            onClick={() => submitPokemon(pokemonName, pokemonDescription, finalPrompt, imageData, steps, seed, generation, negativePrompt)}
-                        >
-                            Submit Pokemon
-                        </button>
+                                <div className='my-5'>
+                                    <Button className='' onClick={() => fetchPokemonDescription(finalPrompt)} disabled={isDescriptionLoading}>
+                                        {isDescriptionLoading ? "Generating Description..." : "Generate Description"}
+                                    </Button>
+                                    {isDescriptionLoading && (
+                                        <div className="d-inline-block ml-2">
+                                            <SpinnerLoading />
+                                        </div>
+                                    )}
+                                    {pokemonDescription && <p>Pokemon Description: {pokemonDescription}</p>}
+                                    {pokemonName && pokemonDescription && (
+                                        <Button
+                                            onClick={() => submitPokemon(pokemonName, pokemonDescription, finalPrompt, imageData, steps, seed, generation, negativePrompt)}
+                                        >
+                                            Submit Pokemon
+                                        </Button>
+                                    )}
+                                </div>
+                            </Col>
+                        </Row>
                     )}
-                </div>
-            )}
-        </div>
+                </Col>
+                {imageData && (
+                    <Col>
+                        <h3>Generated Pokemon</h3>
+                        <img src={`data:image/png;base64,${imageData}`} alt="Generated Pokemon" />
+                        <p>Seed: {seed}</p>
+                        <p>Prompt: {prompt}</p>
+                        <p>Steps: {steps}</p>
+                    </Col>
+                )}
+            </Row>
+        </Container>
     );
 };
 
-export default MonBuilderPage;
 
+export default MonBuilderPage;

@@ -14,7 +14,7 @@ import { oktaConfig } from './lib/oktaConfig';
 import { OktaAuth, toRelativeUrl } from '@okta/okta-auth-js';
 import { LoginCallback, Security } from '@okta/okta-react';
 import LoginWidget from './Auth/Login';
-import { CommentListPage } from './layouts/PoketexPage/CommentListPage/CommentListPage';
+import { CommentListPage } from './layouts/PoketexPage/Components/Comments/CommentListPage/CommentListPage';
 import MonBuilderPage from './layouts/MonBuilderPage/MonBuilderPage';
 import { UserPage } from './layouts/UserPage/UserPage';
 import { BreedingPage } from './layouts/BreedingPage/BreedingPage';
@@ -68,7 +68,7 @@ export const App = () => {
 
             <Route path='/login/callback' component={LoginCallback} />
 
-            <Route path='/user/:userName/:parent1/:parent2'>
+            <Route path='/user/:userName/:parent1/'>
               <BreedingPage />
             </Route>
 

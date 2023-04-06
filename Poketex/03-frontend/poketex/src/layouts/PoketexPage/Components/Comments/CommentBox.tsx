@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import PoketexModel from "../../../models/PoketexModel";
+import PoketexModel from "../../../../models/PoketexModel";
 import { LeaveAComment } from "./LeaveAComment";
 
 export const CommentBox: React.FC<{

@@ -180,8 +180,4 @@ export const SearchPoketexesPage = () => {
     )
 
 
-
-
-
-
 }

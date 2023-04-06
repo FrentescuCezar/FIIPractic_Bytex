@@ -22,7 +22,7 @@ const keyframesStyle = `
 
 export const SpinnerLoading = () => {
     return (
-        <div className='container d-flex justify-content-center' style={{ height: 550 }}>
+        <div className='d-flex justify-content-center align-items-center' style={{ height: 150 }}>
             <style>
                 {keyframesStyle}
             </style>

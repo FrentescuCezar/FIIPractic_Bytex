@@ -157,6 +157,71 @@
   animation: pulse 0.5s ease;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat p {
+  margin: 0;
+  line-height: 2;
+}
+
+.hp {
+  background-color: #3F88C5;
+  color: #ffffff;
+}
+
+.attack {
+  background-color: #ff0033;
+  color: #ffffff;
+}
+
+.defense {
+  background-color: #ffa630;
+  color: #ffffff;
+}
+
+.spDefense {
+  background-color: #f57c73;
+  color: #ffffff;
+}
+
+.speed {
+  background-color: #f6ac69;
+  color: #ffffff;
+}
+
+.baseTotal {
+  background-color: #9197AE;
+  color: #ffffff;
+}
+
+.stat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  padding: 5px 10px;
+  margin: 5px;
+
+}
+
+
+
 /* ########### ########### ###########*/
 
 
@@ -209,6 +274,24 @@
 .circle-toggle:focus {
   box-shadow: none !important;
   outline: none !important;
+}
+
+.custom-slider {
+  width: 20%;
+  height: 10px;
+  margin: 10px 0;
+  background-color: #ddd;
+}
+
+.custom-slider input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background-color: #e81a1a;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 /* set the height based on the width to make it a square */

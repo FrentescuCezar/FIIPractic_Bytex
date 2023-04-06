@@ -3,10 +3,14 @@ import PoketexModel from '../../models/PoketexModel'
 import { SpinnerLoading } from '../Utils/SpinnerLoading'
 import { Pagination } from '../Utils/Pagination'
 import { PokemonsForBreeding } from './Components/PokemonsForBreeding'
+import { useOktaAuth } from '@okta/okta-react';
 
 
 
 export const BreedingPage = () => {
+
+    const { oktaAuth, authState } = useOktaAuth();
+
     const [poketexes, setPoketexes] = useState<PoketexModel[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [httpError, setHttpError] = useState(null);
@@ -19,7 +23,48 @@ export const BreedingPage = () => {
 
     const poketexUsername = (window.location.pathname).split("/")[2];
     const parent1 = (window.location.pathname).split("/")[3];
-    const parent2 = (window.location.pathname).split("/")[4];
+
+    const breedPokemon = async (selectedParentId: number) => {
+        if (!authState.isAuthenticated) {
+            alert('Please login to breed Pokémon.');
+            return;
+        }
+
+        const parent1Id = parseInt(parent1);
+        const parent2Id = selectedParentId;
+        const token = authState.accessToken.accessToken;
+
+        const url = 'http://localhost:8089/breedapi/breed';
+        const body = {
+            parent1: parent1Id,
+            parent2: parent2Id,
+            token,
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to breed Pokémon.');
+            }
+
+            const responseData = await response.json();
+            console.log(responseData);
+
+            // Redirect or update UI based on responseData, as needed
+        } catch (error) {
+            console.error(error);
+            alert('Failed to breed Pokémon. Please try again.');
+        }
+    };
+
 
 
     useEffect(() => {
@@ -90,6 +135,10 @@ export const BreedingPage = () => {
 
 
 
+
+
+
+
     if (isLoading) {
         return (
             <SpinnerLoading />
@@ -147,7 +196,7 @@ export const BreedingPage = () => {
                     </p>
                     <div className="d-flex flex-wrap justify-content-center">
                         {poketexes.map(poketex => (
-                            <PokemonsForBreeding poketex={poketex} key={poketex.id} />
+                            <PokemonsForBreeding poketex={poketex} key={poketex.id} onChooseForBreeding={breedPokemon} />
                         ))}
                     </div>
                     {totalPages > 1 &&

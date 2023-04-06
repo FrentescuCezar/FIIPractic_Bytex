@@ -52,7 +52,7 @@ public class PokemonStatsGenerator {
         int randomValue = 0;
 
         for (int i = 0; i < bias; i++) {
-            randomValue += RANDOM.nextInt(range) + min;
+            randomValue -= RANDOM.nextInt(range) + min;
         }
 
         randomValue += midpoint * (bias * 2);

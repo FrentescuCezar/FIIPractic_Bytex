@@ -4,19 +4,22 @@ import PoketexModel from '../../models/PoketexModel';
 
 import { SpinnerLoading } from '../Utils/SpinnerLoading';
 
-import { CommentBox } from './Components/CommentBox';
+import { CommentBox } from './Components/Comments/CommentBox';
 import CommentModel from '../../models/CommentModel';
-import { LatestComments } from './Components/LatestComments';
+import { LatestComments } from './Components/Comments/LatestComments';
 import CommentRequestModel from '../../models/CommentRequestModel';
-import { StarsComment } from './Components/StarsComment';
+import { StarsComment } from './Components/Comments/StarsComment';
 
 import { useOktaAuth } from '@okta/okta-react';
 
 
 import { Pagination } from '../Utils/Pagination';
 import { RelatedPoketexes } from './Components/RelatedPoketexes';
-import { SearchPoketex } from '../SearchPoketexesPage/Components/SearchPoketex';
 import { Link } from 'react-router-dom';
+
+
+import PokemonStats from './Components/PoketexStats/PoketexStats';
+import Seed from './Components/PoketexStats/Seed';
 
 export const PoketexPage = () => {
 
@@ -28,7 +31,9 @@ export const PoketexPage = () => {
     const [poketexError, setPoketexError] = useState<string | null>(null);
 
 
-
+    // Parents
+    const [parent1Data, setParent1Data] = useState(null);
+    const [parent2Data, setParent2Data] = useState(null);
 
 
 
@@ -42,15 +47,17 @@ export const PoketexPage = () => {
 
 
     const [isCommentLeft, setIsCommentLeft] = useState<boolean>(false);
-
     const [firstTimeLoadingThePage, setFirstTimeLoadingThePage] = useState<boolean>(true);
+
+
+
 
 
 
 
     //Load the pokemon info
     useEffect(() => {
-        const fetchPoketex = async () => {
+        const fetchInitialPoketex = async () => {
 
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -98,11 +105,74 @@ export const PoketexPage = () => {
             setIsLoading(false);
 
         };
-        fetchPoketex().catch((error: any) => {
+        fetchInitialPoketex().catch((error: any) => {
             setIsLoading(false);
             setPoketexError(error.message);
         })
+
     }, [poketexId]);
+
+
+    // Load the parents
+    useEffect(() => {
+        const fetchParent = async (parentId: number) => {
+            const response = await fetch(`http://localhost:8084/api/pokedexes/${parentId}`, {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Something went wrong!');
+            }
+
+            const data = await response.json();
+            return data;
+        };
+
+        if (poketex?.parent1) {
+            fetchParent(poketex.parent1)
+                .then((data) => setParent1Data(data))
+                .catch((error) => console.error('Error fetching parent1:', error));
+        }
+
+        if (poketex?.parent2) {
+            fetchParent(poketex.parent2)
+                .then((data) => setParent2Data(data))
+                .catch((error) => console.error('Error fetching parent2:', error));
+        }
+    }, [poketex]);
+
+
+
+    // Parent card
+    interface ParentCardProps {
+        parent: PoketexModel | null;
+    }
+
+    const ParentCard: React.FC<ParentCardProps> = ({ parent }) => {
+        if (!parent) return null;
+
+        return (
+            <div className="card text-center">
+                <Link to={`/${parent.id}`}>
+                    <img
+                        src={`data:image/png;base64,${parent.image}`}
+                        className="card-img-top mx-auto"
+                        alt={parent.name}
+                    />
+                </Link>
+
+                <div className="card-body">
+                    <h5 className="card-title">{parent.name}</h5>
+                    <Link to={`/user/${parent.username}`}>
+                        <h6 className="text-primary mx-auto">{parent.username}</h6>
+                    </Link>
+                </div>
+            </div>
+        );
+    };
 
 
 
@@ -183,6 +253,7 @@ export const PoketexPage = () => {
 
 
 
+    // Submit Comment
     async function submitComment(starInput: number, commentDescription: string) {
         let pokemonId: number = 0;
         if (poketex?.id) {
@@ -213,19 +284,15 @@ export const PoketexPage = () => {
 
 
 
-
-
-
-
     //LOAD RELATED POKEMONS
-    const [poketexes, setPoketexes] = useState<PoketexModel[]>([]);
+    const [relatedPoketexes, setRelatedPoketexes] = useState<PoketexModel[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [poketexesPerPage] = useState(8);
     const [totalAmountOfPoketexes, setTotalAmountOfPoketexes] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
 
-
+    //LOAD RELATED POKEMONS
     useEffect(() => {
         const fetchRelatedPokemons = async () => {
             const serachNameAndPrompt = poketex?.name + ' ' + poketex?.prompt;
@@ -275,7 +342,7 @@ export const PoketexPage = () => {
                 loadedPoketexes.push(poketex);
             }
 
-            setPoketexes(loadedPoketexes);
+            setRelatedPoketexes(loadedPoketexes);
             setIsLoading(false);
 
         };
@@ -289,12 +356,13 @@ export const PoketexPage = () => {
             //window.scrollTo(0, 1200);  //THIS IS IF YOU WANT TO SCROLL TO TOP WHEN YOU CHANGE PAGE FGM
         }
 
-
-
     }, [currentPage, poketex]);
 
 
 
+
+
+    // PAGINATION
     const indexOfLastPoketex: number = currentPage * poketexesPerPage;
     const indexOfFirstPoketex: number = indexOfLastPoketex - poketexesPerPage;
 
@@ -302,29 +370,6 @@ export const PoketexPage = () => {
         poketexesPerPage * currentPage : totalAmountOfPoketexes;
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -345,19 +390,25 @@ export const PoketexPage = () => {
 
 
 
-
+    // Description Sections
     const paragraphs = poketex?.description.split('.').filter(Boolean) ?? [];
     const numParagraphs = paragraphs.length;
     const paragraphsPerSection = Math.ceil(numParagraphs / 3);
 
-    const sectionedText = [];
+    const sectionedDescription = [];
     for (let i = 0; i < numParagraphs; i += paragraphsPerSection) {
-        sectionedText.push(
+        sectionedDescription.push(
             <div key={i} style={{ marginBottom: "20px" }}>
                 {paragraphs.slice(i, i + paragraphsPerSection).join('. ')}.
             </div>
         );
     }
+
+
+
+
+
+
 
 
 
@@ -383,12 +434,38 @@ export const PoketexPage = () => {
                                     <StarsComment rating={totalStars} size={40} />
                                 </div>
                             </div>
+                            <Seed seed={poketex?.seed} />
+                            <div className='my-5'>
+                                <PokemonStats
+                                    hp={poketex?.hp}
+                                    attack={poketex?.attack}
+                                    defense={poketex?.defense}
+                                    spDefense={poketex?.spDefense}
+                                    speed={poketex?.speed}
+                                    baseTotal={poketex?.baseTotal}
+                                />
+                            </div>
+
+
                         </div>
                     </div>
                     <div className='col-4 col-md-7 container'>
                         <div className='ml-2'>
-                            <div className='lead'>{sectionedText}</div>
+                            <div className='lead'>{sectionedDescription}</div>
                         </div>
+                        {parent1Data && parent2Data
+                            ?
+                            <div className='mt-5 text-center'>
+                                <h2 className='mb-4'>Parents</h2>
+                                <div className='d-flex justify-content-center align-items-center'>
+                                    <ParentCard parent={parent1Data} />
+                                    <p className='mx-3'><b>+</b></p>
+                                    <ParentCard parent={parent2Data} />
+                                </div>
+                            </div>
+                            :
+                            <></>
+                        }
                     </div>
                     <CommentBox poketex={poketex}
                         mobile={false}
@@ -410,7 +487,7 @@ export const PoketexPage = () => {
                     <p>
                         {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfPoketexes} items:
                     </p>
-                    {poketexes.map(poketex => (
+                    {relatedPoketexes.map(poketex => (
                         <RelatedPoketexes poketex={poketex} key={poketex.id} />
                     ))}
                     {totalPages > 1 &&
@@ -430,14 +507,38 @@ export const PoketexPage = () => {
                 </div>
                 <div className='mt-4'>
                     <div className='ml-2'>
-                        <h2>{poketex?.name}</h2>
-                        <Link to={`/user/${poketex?.username}`}>
-                            <h5 className='text-primary'>{poketex?.username}</h5>
-                        </Link>
-                        <div className="d-flex flex-row">
-                            <StarsComment rating={totalStars} size={40} />
+                        <div className='d-flex flex-column align-items-center'>
+                            <h2>{poketex?.name}</h2>
+                            <Link to={`/user/${poketex?.username}`}>
+                                <h5 className='text-primary'>{poketex?.username}</h5>
+                            </Link>
+                            <div className="d-flex flex-row">
+                                <StarsComment rating={totalStars} size={40} />
+                            </div>
+                            <Seed seed={poketex?.seed} />
+                            <PokemonStats
+                                hp={poketex?.hp}
+                                attack={poketex?.attack}
+                                defense={poketex?.defense}
+                                spDefense={poketex?.spDefense}
+                                speed={poketex?.speed}
+                                baseTotal={poketex?.baseTotal}
+                            />
                         </div>
-                        <p className='lead'>{poketex?.description}</p>
+                        <p className='lead'>{sectionedDescription}</p>
+                        {parent1Data && parent2Data
+                            ?
+                            <div className='mt-5 text-center'>
+                                <h2 className='mb-4'>Parents</h2>
+                                <div className='d-flex justify-content-center align-items-center'>
+                                    <ParentCard parent={parent1Data} />
+                                    <p className='mx-3'><b>+</b></p>
+                                    <ParentCard parent={parent2Data} />
+                                </div>
+                            </div>
+                            :
+                            <></>
+                        }
                     </div>
                 </div>
                 <CommentBox poketex={poketex}
@@ -458,7 +559,7 @@ export const PoketexPage = () => {
                 <p>
                     {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfPoketexes} items:
                 </p>
-                {poketexes.map(poketex => (
+                {relatedPoketexes.map(poketex => (
                     <RelatedPoketexes poketex={poketex} key={poketex.id} />
                 ))}
                 {totalPages > 1 &&

@@ -1,4 +1,4 @@
-import CommentModel from "../../../models/CommentModel";
+import CommentModel from "../../../../models/CommentModel";
 import { StarsComment } from "./StarsComment";
 
 export const CommentMessage: React.FC<{ comment: CommentModel }> = (props) => {

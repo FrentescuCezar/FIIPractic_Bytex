@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import CommentModel from "../../../models/CommentModel";
-import { SpinnerLoading } from "../../Utils/SpinnerLoading";
-import { CommentMessage } from "../Components/CommentMessage";
-import { Pagination } from "../../Utils/Pagination";
+import CommentModel from "../../../../../models/CommentModel";
+import { SpinnerLoading } from "../../../../Utils/SpinnerLoading";
+import { CommentMessage } from "../CommentMessage";
+import { Pagination } from "../../../../Utils/Pagination";
 
 export const CommentListPage = () => {
 

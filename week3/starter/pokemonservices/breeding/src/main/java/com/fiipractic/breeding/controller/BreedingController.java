@@ -17,6 +17,7 @@ public class BreedingController {
         this.breedingService = breedingService;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/breed")
     public String breed(@RequestBody BreedRequest breedRequest) throws JsonProcessingException {
         return breedingService.breed(breedRequest);

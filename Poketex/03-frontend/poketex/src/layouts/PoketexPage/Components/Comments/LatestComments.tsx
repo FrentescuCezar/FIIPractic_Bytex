@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import CommentModel from "../../../models/CommentModel";
+import CommentModel from "../../../../models/CommentModel";
 import { CommentMessage } from "./CommentMessage";
 
 export const LatestComments: React.FC<{

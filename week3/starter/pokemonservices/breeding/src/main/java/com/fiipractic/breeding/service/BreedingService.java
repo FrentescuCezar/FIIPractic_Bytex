@@ -3,8 +3,8 @@ package com.fiipractic.breeding.service;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fiipractic.breeding.repository.EggRepository;
 import com.fiipractic.breeding.requestmodel.BreedRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,52 +24,69 @@ import java.util.Map;
 @Service
 public class BreedingService {
 
-    EggRepository eggRepository;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(BreedingService.class);
 
-
-
-    public BreedingService(EggRepository eggRepository) {
-        this.eggRepository = eggRepository;
-    }
     public String breed(BreedRequest breedRequest) throws JsonProcessingException {
         Integer parent1 = breedRequest.getParent1();
         Integer parent2 = breedRequest.getParent2();
         String token = breedRequest.getToken(); // Extract the token
 
 
-        String parent1Image = getPokemonImageById(parent1);
+
+
+        Map<String, Object> parent1Details = getPokemonDetailsById(parent1);
         Map<String, Object> parent2Details = getPokemonDetailsById(parent2);
 
-        String prompt = (String) parent2Details.get("prompt");
-        String negativePrompt = (String) parent2Details.get("negativePrompt");
-        Integer steps = (Integer) parent2Details.get("steps");
-        Long seed = ((Number) parent2Details.get("seed")).longValue();
-        Integer generation = (Integer) parent2Details.get("generation");
+        String imageParent1 = (String) parent1Details.get("image");
+        String promptParent1 = (String) parent1Details.get("prompt");
+        String negativePromptParent1 = (String) parent1Details.get("negativePrompt");
 
-        // Get the generated image
-        String generatedImage = getNewGeneratedImage(parent1Image, prompt, negativePrompt, steps, seed);
 
-        // Get the generated name and description
-        String generatedName = getGeneratedName(prompt);
-        String generatedDescription = getGeneratedDescription(prompt);
+        String promptParent2 = (String) parent2Details.get("prompt");
+        String negativePromptParent2 = (String) parent2Details.get("negativePrompt");
+        Integer stepsParent2 = (Integer) parent2Details.get("steps");
+        Long seedParent2 = ((Number) parent2Details.get("seed")).longValue();
+
+        Integer generation = (Integer) parent2Details.get("generation") + 1;
+
+
+        // Get the generated image, name, and description
+        String generatedImage = getNewGeneratedImage(imageParent1, promptParent2, negativePromptParent2, stepsParent2, seedParent2);
+        System.out.println(generatedImage);
+
+        String generatedName = getGeneratedName(promptParent1 + " + " + promptParent2);
+        String generatedDescription = getGeneratedDescription(promptParent1 + " + " + promptParent2);
+
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode generatedImageNode = objectMapper.readTree(generatedImage);
+        String seedFromGeneratedImage = generatedImageNode.get("seed").asText();
 
         // Extract the actual values for name, description, and image
-        ObjectMapper objectMapper = new ObjectMapper();
         generatedName = objectMapper.readTree(generatedName).get("name").asText();
         generatedDescription = objectMapper.readTree(generatedDescription).get("description").asText();
         generatedImage = objectMapper.readTree(generatedImage).get("image").asText();
+
+
+
 
         // Prepare request body
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("name", generatedName);
         requestBody.put("description", generatedDescription);
-        requestBody.put("prompt", prompt);
+        requestBody.put("prompt", promptParent1 + " + " + promptParent2);
 
-        if (negativePrompt != null) {
+        String negativePrompt = null;
+        if (negativePromptParent1 != null && negativePromptParent2 != null) {
+            negativePrompt = negativePromptParent1 + " " + negativePromptParent2;
             requestBody.put("negativePrompt", negativePrompt);
-        } else {
+        } else if(negativePromptParent1 != null) {
+            negativePrompt = negativePromptParent1;
+            requestBody.put("negativePrompt", negativePrompt);
+        } else if(negativePromptParent2 != null) {
+            negativePrompt = negativePromptParent2;
+            requestBody.put("negativePrompt", negativePrompt);
+        }else{
             requestBody.put("negativePrompt", null);
         }
 
@@ -77,8 +94,8 @@ public class BreedingService {
         requestBody.put("parent2", parent2);
         requestBody.put("generation", generation);
         requestBody.put("image", generatedImage);
-        requestBody.put("steps", steps);
-        requestBody.put("seed", seed);
+        requestBody.put("steps", stepsParent2);
+        requestBody.put("seed", seedFromGeneratedImage);
 
         // Print the JSON request body
         System.out.println("Request body: " + objectMapper.writeValueAsString(requestBody));

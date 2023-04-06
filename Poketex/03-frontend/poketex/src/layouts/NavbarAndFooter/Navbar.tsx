@@ -25,7 +25,13 @@ export const Navbar: React.FC<{}> = (props) => {
     }
 
     const handleLogout = async () => oktaAuth.signOut();
-    const JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
+    let JWTDecoded;
+    if (authState.isAuthenticated) {
+        JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
+    } else {
+        JWTDecoded = { sub: "Not_Logged_In" };
+    }
+
 
 
     return (
