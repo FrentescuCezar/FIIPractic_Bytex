@@ -17,6 +17,7 @@ import LoginWidget from './Auth/Login';
 import { CommentListPage } from './layouts/PoketexPage/CommentListPage/CommentListPage';
 import MonBuilderPage from './layouts/MonBuilderPage/MonBuilderPage';
 import { UserPage } from './layouts/UserPage/UserPage';
+import { BreedingPage } from './layouts/BreedingPage/BreedingPage';
 
 const oktaAuth = new OktaAuth(oktaConfig)
 
@@ -66,6 +67,11 @@ export const App = () => {
             />
 
             <Route path='/login/callback' component={LoginCallback} />
+
+            <Route path='/user/:userName/:parent1/:parent2'>
+              <BreedingPage />
+            </Route>
+
 
             <Route path='/user/:userName'>
               <UserPage />

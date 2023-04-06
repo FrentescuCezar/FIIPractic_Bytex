@@ -10,6 +10,8 @@ import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.requestmodel.PoketexRequest;
 import com.fiipractic.stablediffusion.utils.JsonUtils;
 import com.fiipractic.stablediffusion.utils.PokemonStatsGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class StableDiffusionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StableDiffusionService.class);
+
 
     private final StableDiffusionRepository stableDiffusionRepository;
 
@@ -159,6 +164,9 @@ public class StableDiffusionService {
     }
 
     public Pokedex createPokedex(PoketexRequest pokedexRequest, String username) throws IOException {
+        LOGGER.info("Creating Pokedex for user: {}", username);
+        LOGGER.info("PoketexRequest: {}", pokedexRequest);
+
         Pokedex pokedex = new Pokedex();
 
         pokedex.setName(pokedexRequest.getName());
@@ -175,7 +183,7 @@ public class StableDiffusionService {
         }
 
         if(pokedexRequest.getParent2() != null && pokedexRequest.getParent2().isPresent()){
-            pokedex.setParent1(pokedexRequest.getParent1().orElse(null));
+            pokedex.setParent2(pokedexRequest.getParent2().orElse(null));
         }
 
         pokedex.setSteps(pokedexRequest.getSteps());
@@ -194,6 +202,8 @@ public class StableDiffusionService {
         pokedex.setBaseTotal(PokemonStatsGenerator.calculateBaseTotal(pokedex.getHp(), pokedex.getAttack(), pokedex.getSpAttack(), pokedex.getSpDefense(), pokedex.getSpeed()));
         pokedex.setAbilities(PokemonStatsGenerator.generateRandomAbilities());
         pokedex.setUsername(username);
+
+        LOGGER.info("Generated Pokedex: {}", pokedex);
 
         return pokedex;
     }

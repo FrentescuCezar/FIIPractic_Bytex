@@ -1,67 +1,187 @@
 package com.fiipractic.breeding.service;
 
-import com.fiipractic.breeding.model.Egg;
-import com.fiipractic.breeding.model.EggStatus;
-import com.fiipractic.breeding.repository.EggRepository;
-import com.fiipractic.pokemoncatalog.model.Pokemon;
-import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.web.client.RestTemplate;
+import java.util.Optional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fiipractic.breeding.repository.EggRepository;
+import com.fiipractic.breeding.requestmodel.BreedRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class BreedingService {
 
     EggRepository eggRepository;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BreedingService.class);
+
+
+
     public BreedingService(EggRepository eggRepository) {
         this.eggRepository = eggRepository;
     }
-    public void breed(Integer pokeId1, Integer pokeId2, Model model) {
-        Pokemon pokemon1 = getPokemon(pokeId1);
-        Pokemon pokemon2 = getPokemon(pokeId2);
+    public String breed(BreedRequest breedRequest) throws JsonProcessingException {
+        Integer parent1 = breedRequest.getParent1();
+        Integer parent2 = breedRequest.getParent2();
+        String token = breedRequest.getToken(); // Extract the token
 
-        Egg pendingEgg = eggRepository.findOneByPokemon1AndPokemon2AndStatus(pokeId1, pokeId2, EggStatus.PENDING);
-        Egg hatchedEgg = eggRepository.findOneByPokemon1AndPokemon2AndStatus(pokeId1, pokeId2, EggStatus.HATCHED);
 
-        Boolean combinationExists = false;
+        String parent1Image = getPokemonImageById(parent1);
+        Map<String, Object> parent2Details = getPokemonDetailsById(parent2);
 
-        if(pendingEgg == null && hatchedEgg == null) {
-            createEgg(pokemon1, pokemon2);
-        } else if (pendingEgg != null) {
-            System.out.println("Egg is pending");
+        String prompt = (String) parent2Details.get("prompt");
+        String negativePrompt = (String) parent2Details.get("negativePrompt");
+        Integer steps = (Integer) parent2Details.get("steps");
+        Long seed = ((Number) parent2Details.get("seed")).longValue();
+        Integer generation = (Integer) parent2Details.get("generation");
+
+        // Get the generated image
+        String generatedImage = getNewGeneratedImage(parent1Image, prompt, negativePrompt, steps, seed);
+
+        // Get the generated name and description
+        String generatedName = getGeneratedName(prompt);
+        String generatedDescription = getGeneratedDescription(prompt);
+
+        // Extract the actual values for name, description, and image
+        ObjectMapper objectMapper = new ObjectMapper();
+        generatedName = objectMapper.readTree(generatedName).get("name").asText();
+        generatedDescription = objectMapper.readTree(generatedDescription).get("description").asText();
+        generatedImage = objectMapper.readTree(generatedImage).get("image").asText();
+
+        // Prepare request body
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("name", generatedName);
+        requestBody.put("description", generatedDescription);
+        requestBody.put("prompt", prompt);
+
+        if (negativePrompt != null) {
+            requestBody.put("negativePrompt", negativePrompt);
         } else {
-            System.out.println("Egg is hatched");
-            combinationExists = true;
+            requestBody.put("negativePrompt", null);
         }
 
-        model.addAttribute("pokemon1", pokemon1);
-        model.addAttribute("pokemon2", pokemon2);
-        model.addAttribute("combinationExists", combinationExists);
-        model.addAttribute("pokeId1", pokeId1);
-        model.addAttribute("pokeId2", pokeId2);
+        requestBody.put("parent1", parent1);
+        requestBody.put("parent2", parent2);
+        requestBody.put("generation", generation);
+        requestBody.put("image", generatedImage);
+        requestBody.put("steps", steps);
+        requestBody.put("seed", seed);
 
-        System.out.println(pokemon1);
-        System.out.println(pokemon2);
+        // Print the JSON request body
+        System.out.println("Request body: " + objectMapper.writeValueAsString(requestBody));
+
+        // Call the createPokemon API
+        ResponseEntity<String> response = createPokemon(requestBody, token);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            // Successfully created the new breeded Pokémon
+            System.out.println("Pokemon created successfully");
+            return response.getBody();
+        } else {
+            // Handle error
+            System.err.println("Error creating Pokemon: " + response.getStatusCode());
+            return null;
+        }
     }
 
-    private void createEgg(Pokemon pokemon1, Pokemon pokemon2) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime hatchTime = now.plusSeconds((pokemon1.getBaseEggSteps() + pokemon2.getBaseEggSteps()) / 2000);
-        eggRepository.save(new Egg(pokemon1.getId(), pokemon2.getId(), hatchTime, EggStatus.PENDING));
-    }
+    private String getGeneratedName(String prompt) {
+        String url = "http://localhost:8088/name";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("prompt", prompt);
 
-    private Pokemon getPokemon(Integer pokemonId) {
         RestTemplate restTemplate = new RestTemplate();
+        String generatedName = restTemplate.getForObject(builder.toUriString(), String.class);
 
-        Pokemon pokemon = restTemplate.getForObject(
-                "http://localhost:8081/pokedex/pokemon/" + pokemonId,
-                Pokemon.class);
-
-        return pokemon;
+        return generatedName;
     }
+
+    private String getGeneratedDescription(String prompt) {
+        String url = "http://localhost:8088/description";
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("prompt", prompt);
+
+        RestTemplate restTemplate = new RestTemplate();
+        String generatedDescription = restTemplate.getForObject(builder.toUriString(), String.class);
+
+        return generatedDescription;
+    }
+
+    private String getNewGeneratedImage(String parent1Image,String prompt, String negativePrompt, Integer steps, Long seed) throws JsonProcessingException {
+        String apiUrl = "http://localhost:8084/api/ImageToImage";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("image", parent1Image);
+        requestBody.put("prompt", prompt);
+        requestBody.put("negativePrompt", negativePrompt);
+        requestBody.put("steps", steps);
+        requestBody.put("seed", seed);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(requestBody);
+
+
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        String response = restTemplate.postForObject(apiUrl, entity, String.class);
+
+        return response;
+    }
+
+    private String getPokemonImageById(Integer id) {
+        String url = "http://localhost:8084/api/pokedex/" + id + "/image";
+        RestTemplate restTemplate = new RestTemplate();
+        String base64Image = restTemplate.getForObject(url, String.class);
+        return base64Image;
+    }
+
+    private Map<String, Object> getPokemonDetailsById(Integer id) {
+        String url = "http://localhost:8084/api/pokedexes/" + id;
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> pokemonDetails = restTemplate.getForObject(url, Map.class);
+        return pokemonDetails;
+    }
+
+
+
+    private ResponseEntity<String> createPokemon(Map<String, Object> requestBody, String token) throws JsonProcessingException {
+        String createPokemonUrl = "http://localhost:8084/api/create";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + token);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(requestBody);
+
+        // Log the request body before sending
+        LOGGER.info("Sending request body: {}", json);
+
+        HttpEntity<String> entity = new HttpEntity<>(json, headers);
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(createPokemonUrl, entity, String.class);
+            LOGGER.info("Received successful response from create Pokemon API: {}", response.getBody());
+            return response;
+        } catch (HttpClientErrorException e) {
+            LOGGER.error("Request body: {}", json); // Log the request body
+            LOGGER.error("Response: {}", e.getResponseBodyAsString()); // Log the response message
+            throw e;
+        }
+    }
+
 }

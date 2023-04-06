@@ -1,12 +1,14 @@
 package com.fiipractic.breeding.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fiipractic.breeding.requestmodel.BreedRequest;
 import com.fiipractic.breeding.service.BreedingService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-@Controller
+import org.springframework.web.bind.annotation.*;
+
+@RequestMapping("/breedapi")
+@RestController
 public class BreedingController {
 
     private final BreedingService breedingService;
@@ -15,13 +17,10 @@ public class BreedingController {
         this.breedingService = breedingService;
     }
 
-    @GetMapping(value = "/breed")
-    public String breed(@RequestParam(value = "pokeId1") Integer pokeId1, @RequestParam(value = "pokeId2") Integer pokeId2, Model model) {
-        System.out.println(pokeId1 + " " + pokeId2);
+    @PostMapping(value = "/breed")
+    public String breed(@RequestBody BreedRequest breedRequest) throws JsonProcessingException {
+        return breedingService.breed(breedRequest);
 
-        breedingService.breed(pokeId1, pokeId2, model);
-
-        return "breeding"; // ASTA E RETURN LA BREEDING.HTML
     }
 
 

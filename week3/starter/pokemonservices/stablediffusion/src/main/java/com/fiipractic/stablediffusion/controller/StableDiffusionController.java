@@ -11,6 +11,8 @@ import com.fiipractic.stablediffusion.utils.PokemonStatsGenerator;
 
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +30,8 @@ import java.util.Optional;
 @JsonFormat
 @CrossOrigin(origins = "http://localhost:3000")
 public class StableDiffusionController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StableDiffusionController.class);
 
     @Autowired
     private final StableDiffusionService stableDiffusionService;
@@ -85,27 +89,51 @@ public class StableDiffusionController {
         return stableDiffusionRepository.findRelatedPokemons(joinedPrompt, pageable);
     }
 
+
+    @PostMapping("/pokemon-list")
+    public List<Pokedex> getPokemonDetailsByIds(@RequestBody List<Integer> pokemonIds) {
+        return stableDiffusionService.getPokemonDetailsByIds(pokemonIds);
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/pokedex/{id}/image")
+    public ResponseEntity<String> getPokemonImageById(@PathVariable("id") Integer id) {
+        Optional<Pokedex> pokedex = stableDiffusionRepository.findById(id);
+
+        if (pokedex.isPresent()) {
+            String base64Image = pokedex.get().getImage(); // Assuming the image field name is 'image'
+            return new ResponseEntity<>(base64Image, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/create")
     public ResponseEntity<Pokedex> createPokemon(@RequestHeader(value = "Authorization") String token, @RequestBody PoketexRequest pokedexRequest) {
+        LOGGER.info("Received request to create Pokemon with token: {}", token);
+        LOGGER.info("Received PoketexRequest: {}", pokedexRequest);
+
         try {
             String username = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
             Pokedex pokedex = stableDiffusionService.createPokedex(pokedexRequest, username);
 
             stableDiffusionRepository.save(pokedex);
 
+            LOGGER.info("Successfully created Pokemon with ID: {}", pokedex.getId());
+
             return new ResponseEntity<>(pokedex, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("Error creating Pokemon", e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 
-    @PostMapping("/pokemon-list")
-    public List<Pokedex> getPokemonDetailsByIds(@RequestBody List<Integer> pokemonIds) {
-        return stableDiffusionService.getPokemonDetailsByIds(pokemonIds);
-    }
+
 
 
 }

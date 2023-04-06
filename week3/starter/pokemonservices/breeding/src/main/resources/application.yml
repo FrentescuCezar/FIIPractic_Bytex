@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8089
 
 spring:
   application:
@@ -19,3 +19,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  data:
+    rest:
+      base-path: /api
