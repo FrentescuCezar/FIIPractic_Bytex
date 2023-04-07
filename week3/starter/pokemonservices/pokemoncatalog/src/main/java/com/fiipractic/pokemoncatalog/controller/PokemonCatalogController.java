@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,15 @@ public class PokemonCatalogController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/pokedex/recent")
+    public Page<Pokedex> getRecentPokemons(@RequestParam("page") int page,
+                                           @RequestParam("size") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return pokemonCatalogRepository.findAllByOrderByIdDesc(pageable);
+    }
+
+
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/pokedex/random")
     public Page<Pokedex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
         Pageable pageable = PageRequest.of(0, limit);
@@ -53,7 +63,7 @@ public class PokemonCatalogController {
     public Page<Pokedex> getUserPokemons(@RequestParam(value = "username") String username,
                                          @RequestParam("page") int page,
                                          @RequestParam("size") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
         return pokemonCatalogRepository.findByUsername(username, pageable);
     }
 

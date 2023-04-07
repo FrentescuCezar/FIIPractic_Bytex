@@ -16,6 +16,10 @@ import java.util.List;
 public interface PokemonCatalogRepository extends JpaRepository<Pokedex, Integer> {
     Page<Pokedex> findByNameContainingIgnoreCaseOrPromptContainingIgnoreCase(String name, String prompt, Pageable pageable);
 
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    Page<Pokedex> findAllByOrderByIdDesc(Pageable pageable);
+
     @Query(value = "SELECT * FROM pokedex ORDER BY RANDOM()", nativeQuery = true)
     Page<Pokedex> getRandomPokemons(Pageable pageable);
 

@@ -21,7 +21,7 @@ export const SearchPoketexesPage = () => {
     useEffect(() => {
         const fetchPoketex = async () => {
 
-            let baseUrl: string = "http://localhost:8084/api/pokedexes";
+            let baseUrl: string = "http://localhost:8084/api/pokedex/recent";
             let url: string = ``;
 
             if (searchUrl === '') {
@@ -45,15 +45,11 @@ export const SearchPoketexesPage = () => {
             const responseJson = await response.json();
 
             let responseData;
-            if (searchUrl === '') {
-                responseData = responseJson._embedded.pokedexes;
-                setTotalAmountOfPoketexes(responseJson.page.totalElements);
-                setTotalPages(responseJson.page.totalPages);
-            } else {
-                responseData = responseJson.content;
-                setTotalAmountOfPoketexes(responseJson.totalElements);
-                setTotalPages(responseJson.totalPages);
-            }
+
+            responseData = responseJson.content;
+            setTotalAmountOfPoketexes(responseJson.totalElements);
+            setTotalPages(responseJson.totalPages);
+
 
 
 
@@ -63,12 +59,9 @@ export const SearchPoketexesPage = () => {
                 const data = responseData[key];
                 let id: number;
                 let selfLink;
-                if (searchUrl === '') {
-                    selfLink = data._links.self.href
-                    id = parseInt(selfLink.split('/').pop());
-                } else {
-                    id = data.id;
-                }
+
+                id = data.id;
+
 
 
                 const poketex = new PoketexModel(
