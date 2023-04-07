@@ -14,7 +14,7 @@ import { useOktaAuth } from '@okta/okta-react';
 
 
 import { Pagination } from '../Utils/Pagination';
-import { RelatedPoketexes } from './Components/RelatedPoketexes';
+import { RelatedPoketex } from './Components/RelatedPoketexes';
 import { Link } from 'react-router-dom';
 
 
@@ -280,15 +280,11 @@ export const PoketexPage = () => {
 
 
 
-
-
-
-
     //LOAD RELATED POKEMONS
     const [relatedPoketexes, setRelatedPoketexes] = useState<PoketexModel[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [poketexesPerPage] = useState(8);
-    const [totalAmountOfPoketexes, setTotalAmountOfPoketexes] = useState(0);
+    const [totalAmountOfRelatedPoketexes, setTotalAmountOfRelatedPoketexes] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
 
@@ -317,12 +313,7 @@ export const PoketexPage = () => {
             const responseJson = await response.json();
 
             let responseData;
-
             responseData = responseJson.content;
-            setTotalAmountOfPoketexes(responseJson.totalElements);
-            setTotalPages(responseJson.totalPages);
-
-
 
             const loadedPoketexes: PoketexModel[] = [];
             for (const key in responseData) {
@@ -330,7 +321,11 @@ export const PoketexPage = () => {
                 const data = responseData[key];
                 const id: number = data.id;
 
-                const poketex = new PoketexModel(
+                if (id === poketex?.id) {
+                    continue;
+                }
+
+                const poketexRelated = new PoketexModel(
                     id, data.name, data.username,
                     data.description, data.image, data.seed,
                     data.prompt, data.steps, data.generation,
@@ -339,9 +334,11 @@ export const PoketexPage = () => {
                     data.defense, data.spDefense, data.speed,
                     data.baseTotal, data.baseEggSteps, data.experienceGrowth, data.parent1, data.parent2,
                 );
-                loadedPoketexes.push(poketex);
+                loadedPoketexes.push(poketexRelated);
             }
 
+            setTotalAmountOfRelatedPoketexes(responseJson.totalElements - 1);
+            setTotalPages(responseJson.totalPages);
             setRelatedPoketexes(loadedPoketexes);
             setIsLoading(false);
 
@@ -366,8 +363,8 @@ export const PoketexPage = () => {
     const indexOfLastPoketex: number = currentPage * poketexesPerPage;
     const indexOfFirstPoketex: number = indexOfLastPoketex - poketexesPerPage;
 
-    let lastItem = poketexesPerPage * currentPage <= totalAmountOfPoketexes ?
-        poketexesPerPage * currentPage : totalAmountOfPoketexes;
+    let lastItem = poketexesPerPage * currentPage <= totalAmountOfRelatedPoketexes ?
+        poketexesPerPage * currentPage : totalAmountOfRelatedPoketexes;
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -466,6 +463,12 @@ export const PoketexPage = () => {
                             :
                             <></>
                         }
+                        <div className='my-5'>
+                            <h3 className='text-center'>Want to breed with another Pokemon?</h3>
+                            <Link to={`/user/${poketex?.username}/${poketex?.id}`}>
+                                <button className='btn btn-primary mx-auto d-block'>Breed</button>
+                            </Link>
+                        </div>
                     </div>
                     <CommentBox poketex={poketex}
                         mobile={false}
@@ -482,13 +485,13 @@ export const PoketexPage = () => {
 
                     </div>
                     <div className='mt-3'>
-                        <h5> Number of Related Pokemons: ({totalAmountOfPoketexes})</h5>
+                        <h5> Number of Related Pokemons: ({totalAmountOfRelatedPoketexes})</h5>
                     </div>
                     <p>
-                        {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfPoketexes} items:
+                        {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfRelatedPoketexes} items:
                     </p>
                     {relatedPoketexes.map(poketex => (
-                        <RelatedPoketexes poketex={poketex} key={poketex.id} />
+                        <RelatedPoketex poketex={poketex} key={poketex.id} />
                     ))}
                     {totalPages > 1 &&
                         <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />
@@ -539,6 +542,10 @@ export const PoketexPage = () => {
                             :
                             <></>
                         }
+                        <h3 className='text-center'>Want to breed with another Pokemon?</h3>
+                        <Link to={`/user/${poketex?.username}/${poketex?.id}`}>
+                            <button className='btn btn-primary mx-auto d-block'>Breed</button>
+                        </Link>
                     </div>
                 </div>
                 <CommentBox poketex={poketex}
@@ -554,13 +561,13 @@ export const PoketexPage = () => {
 
                 {/* COPY PASTE S-A INTAMPLAT AICI*/}
                 <div className='mt-3'>
-                    <h5> Number of Related Pokemons: ({totalAmountOfPoketexes})</h5>
+                    <h5> Number of Related Pokemons: ({totalAmountOfRelatedPoketexes})</h5>
                 </div>
                 <p>
-                    {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfPoketexes} items:
+                    {indexOfFirstPoketex + 1} to {lastItem} of {totalAmountOfRelatedPoketexes} items:
                 </p>
                 {relatedPoketexes.map(poketex => (
-                    <RelatedPoketexes poketex={poketex} key={poketex.id} />
+                    <RelatedPoketex poketex={poketex} key={poketex.id} />
                 ))}
                 {totalPages > 1 &&
                     <Pagination currentPage={currentPage} totalPages={totalPages} paginate={paginate} />

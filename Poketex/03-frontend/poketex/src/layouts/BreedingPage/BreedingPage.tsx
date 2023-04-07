@@ -4,12 +4,16 @@ import { SpinnerLoading } from '../Utils/SpinnerLoading'
 import { Pagination } from '../Utils/Pagination'
 import { PokemonsForBreeding } from './Components/PokemonsForBreeding'
 import { useOktaAuth } from '@okta/okta-react';
+import { useHistory } from 'react-router-dom'
 
 
 
 export const BreedingPage = () => {
 
     const { oktaAuth, authState } = useOktaAuth();
+
+    const history = useHistory();
+
 
     const [poketexes, setPoketexes] = useState<PoketexModel[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -58,7 +62,8 @@ export const BreedingPage = () => {
             const responseData = await response.json();
             console.log(responseData);
 
-            // Redirect or update UI based on responseData, as needed
+            alert('Your Pokémon has been successfully bred.');
+            history.push('/home'); // Redirect to /home page
         } catch (error) {
             console.error(error);
             alert('Failed to breed Pokémon. Please try again.');
@@ -107,6 +112,9 @@ export const BreedingPage = () => {
                 let id: number;
                 id = data.id;
 
+                if (id === parseInt(parent1)) {
+                    continue;
+                }
 
                 const poketex = new PoketexModel(
                     id, data.name, data.username, // Use the extracted ID here

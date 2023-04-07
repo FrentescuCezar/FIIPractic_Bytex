@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+
 import PoketexModel from "../../../models/PoketexModel";
 
 interface PokemonsForBreedingProps {
@@ -8,6 +10,10 @@ interface PokemonsForBreedingProps {
 
 
 export const PokemonsForBreeding: React.FC<PokemonsForBreedingProps> = ({ poketex, onChooseForBreeding }) => {
+
+    const [isLoading, setIsLoading] = useState(false);
+
+
 
     function truncateText(text: string, maxLength: number) {
         if (text.length > maxLength) {
@@ -19,6 +25,12 @@ export const PokemonsForBreeding: React.FC<PokemonsForBreedingProps> = ({ pokete
 
     const MAX_LENGTH_DESCRIPTION = 170;
     const truncatedDescription = truncateText(poketex.description, MAX_LENGTH_DESCRIPTION);
+
+    const handleChooseForBreeding = async () => {
+        setIsLoading(true);
+        await onChooseForBreeding(poketex.id);
+        setIsLoading(false);
+    };
 
 
     return (
@@ -50,8 +62,8 @@ export const PokemonsForBreeding: React.FC<PokemonsForBreedingProps> = ({ pokete
                         <Link className='btn main-color-gray-button btn-m my-2' to={`/pokemon/${poketex.id}`}>
                             View Details
                         </Link>
-                        <button className="btn main-color-gray-button btn-m my-2" onClick={() => onChooseForBreeding(poketex.id)}>
-                            Choose for Breeding
+                        <button className="btn main-color-gray-button btn-m my-2" onClick={handleChooseForBreeding}>
+                            {isLoading ? 'Breeding...' : 'Choose for Breeding'}
                         </button>
                     </div>
                 </div>

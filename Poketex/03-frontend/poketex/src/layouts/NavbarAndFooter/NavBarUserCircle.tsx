@@ -53,7 +53,7 @@ const UserCircle: React.FC<UserCircleProps> = ({ onLogout, username }) => {
                 <Dropdown.Toggle id="user-circle" className="circle-toggle" />
             </div>
             <Dropdown.Menu align="end">
-                <Link to={`/user/${username}`}>
+                <Link to={`/user/${username}/${username}`}>
                     <Dropdown.Item as="span">User Profile</Dropdown.Item>
                 </Link>
                 <Dropdown.Item onClick={onLogout}>Logout</Dropdown.Item>

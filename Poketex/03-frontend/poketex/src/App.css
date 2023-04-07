@@ -294,6 +294,20 @@
   cursor: pointer;
 }
 
+@media (max-width: 576px) {
+  .pokemon-image {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media (min-width: 577px) {
+  .pokemon-image {
+    width: 512px;
+    height: 512px;
+  }
+}
+
 /* set the height based on the width to make it a square */
 
 

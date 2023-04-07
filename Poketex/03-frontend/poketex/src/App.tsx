@@ -68,14 +68,23 @@ export const App = () => {
 
             <Route path='/login/callback' component={LoginCallback} />
 
+            
+
             <Route path='/user/:userName/:parent1/'>
               <BreedingPage />
             </Route>
 
-
-            <Route path='/user/:userName'>
+            
+            <Route path='/user/:userName/:userName' component={UserPage}>
               <UserPage />
             </Route>
+
+            <Route path='/user/:userName' component={UserPage}>
+              <UserPage />
+            </Route>
+
+
+            
 
             <Route
               path="/:poketexId"

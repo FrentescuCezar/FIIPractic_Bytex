@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import PoketexModel from "../../../models/PoketexModel";
 
-export const RelatedPoketexes: React.FC<{ poketex: PoketexModel }> = (props) => {
+export const RelatedPoketex: React.FC<{ poketex: PoketexModel }> = (props) => {
 
     function truncateText(text: string, maxLength: number) {
         if (text.length > maxLength) {
