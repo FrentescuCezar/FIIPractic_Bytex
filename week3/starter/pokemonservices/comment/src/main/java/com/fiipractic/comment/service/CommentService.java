@@ -33,6 +33,7 @@ public class CommentService {
                 .map(result -> (Integer) result[0])
                 .collect(Collectors.toList());
     }
+
     public void postComment(String userEmail, CommentRequest commentRequest) throws Exception {
         Comment validateComment = commentRepository.findByUserNameAndPokemonId(userEmail, commentRequest.getPokemonId());
 
@@ -49,7 +50,7 @@ public class CommentService {
 
         comment.setUserName(userEmail);
 
-        if(commentRequest.getCommentDescription().isPresent()){
+        if (commentRequest.getCommentDescription().isPresent()) {
             comment.setCommentDescription(commentRequest.getCommentDescription().map(Object::toString)
                     .orElse(null));
         }
@@ -58,7 +59,17 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public Boolean userCommentAlreadyExists(String userName, Integer pokemonId){
+    public Boolean userCommentAlreadyExists(String userEmail, Integer pokemonId) {
+
+        String userName;
+        int atSymbolIndex = userEmail.indexOf('@');
+        if (atSymbolIndex >= 0) {
+            userName = userEmail.substring(0, atSymbolIndex);
+        } else {
+            userName = userEmail;
+        }
+
+
         Comment validateComment = commentRepository.findByUserNameAndPokemonId(userName, pokemonId);
         if (validateComment != null) {
             return true;
