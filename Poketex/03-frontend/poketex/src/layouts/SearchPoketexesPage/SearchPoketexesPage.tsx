@@ -3,6 +3,7 @@ import PoketexModel from '../../models/PoketexModel'
 import { SpinnerLoading } from '../Utils/SpinnerLoading'
 import { SearchPoketex } from './Components/SearchPoketex'
 import { Pagination } from '../Utils/Pagination'
+import { fetchPoketexes } from './Api/fetchPoketexes'
 
 
 
@@ -19,8 +20,7 @@ export const SearchPoketexesPage = () => {
 
 
     useEffect(() => {
-        const fetchPoketex = async () => {
-
+        const fetchPoketexData = async () => {
             let baseUrl: string = "http://localhost:8084/api/poketex/recent";
             let url: string = ``;
 
@@ -32,63 +32,22 @@ export const SearchPoketexesPage = () => {
                 url = baseUrl + searchWithPage;
             }
 
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('The Servers are down. Please try again later.');
-            }
-            const responseJson = await response.json();
-
-            let responseData;
-
-            responseData = responseJson.content;
-            setTotalAmountOfPoketexes(responseJson.totalElements);
-            setTotalPages(responseJson.totalPages);
-
-
-
-
-            const loadedPoketexes: PoketexModel[] = [];
-            for (const key in responseData) {
-
-                const data = responseData[key];
-                let id: number;
-                let selfLink;
-
-                id = data.id;
-
-
-
-                const poketex = new PoketexModel(
-                    id, data.name, data.username, // Use the extracted ID here
-                    data.description, data.image, data.seed,
-                    data.prompt, data.steps, data.generation,
-                    data.abilities, data.type1, data.type2,
-                    data.hp, data.attack, data.spAttack,
-                    data.defense, data.spDefense, data.speed,
-                    data.baseTotal, data.baseEggSteps, data.experienceGrowth, data.parent1, data.parent2,
-                );
-                loadedPoketexes.push(poketex);
+            try {
+                const result = await fetchPoketexes(url);
+                setPoketexes(result.poketexes);
+                setTotalAmountOfPoketexes(result.totalElements);
+                setTotalPages(result.totalPages);
+                setIsLoading(false);
+            } catch (error: any) {
+                setIsLoading(false);
+                setHttpError(error.message);
             }
 
-            setPoketexes(loadedPoketexes);
-            setIsLoading(false);
-
+            window.scrollTo(0, 0);
         };
-        fetchPoketex().catch((error: any) => {
-            setIsLoading(false);
-            setHttpError(error.message);
 
-        })
-        window.scrollTo(0, 0);
+        fetchPoketexData();
     }, [currentPage, searchUrl]);
-
-
 
 
     if (isLoading) {

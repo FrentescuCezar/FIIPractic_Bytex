@@ -24,6 +24,7 @@ import Seed from './Components/PoketexStats/Seed';
 
 import jwt_decode from 'jwt-decode';
 import { extractNameFromEmail } from '../Utils/PoketexDetailsUtils';
+import { fetchComments, fetchParent, fetchPoketex, fetchRelatedPokemons, fetchUserCommentPokemon } from './Api/PoketexApi';
 
 
 export const PoketexPage = () => {
@@ -78,79 +79,20 @@ export const PoketexPage = () => {
 
     //Load the pokemon info
     useEffect(() => {
-        const fetchInitialPoketex = async () => {
-
-            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
-            const baseUrl: string = `http://localhost:8084/api/poketexes/${poketexId}`;
-            const response = await fetch(baseUrl, {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                },
+        fetchPoketex(poketexId)
+            .then((loadedPoketex) => {
+                setPoketex(loadedPoketex);
+                setIsLoading(false);
+            })
+            .catch((error: any) => {
+                setIsLoading(false);
+                setPoketexError(error.message);
             });
-
-            if (!response.ok) {
-                throw new Error('Something went wrong!');
-            }
-
-            const data = await response.json();
-
-            const loadedPoketex: PoketexModel = {
-                id: data.id,
-                name: data.name,
-                username: data.username,
-                description: data.description,
-                image: data.image,
-                seed: data.seed,
-                prompt: data.prompt,
-                steps: data.steps,
-                generation: data.generation,
-                abilities: data.abilities,
-                type1: data.type1,
-                type2: data.type2,
-                hp: data.hp,
-                attack: data.attack,
-                spAttack: data.spAttack,
-                defense: data.defense,
-                spDefense: data.spDefense,
-                speed: data.speed,
-                baseTotal: data.baseTotal,
-                baseEggSteps: data.baseEggSteps,
-                experienceGrowth: data.experienceGrowth,
-                parent1: data.parent1,
-                parent2: data.parent2,
-            };
-
-            setPoketex(loadedPoketex);
-            setIsLoading(false);
-
-        };
-        fetchInitialPoketex().catch((error: any) => {
-            setIsLoading(false);
-            setPoketexError(error.message);
-        })
-
     }, [poketexId]);
 
 
+    //Load the Parents info
     useEffect(() => {
-        const fetchParent = async (parentId: number) => {
-            const response = await fetch(`http://localhost:8084/api/poketexes/${parentId}`, {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Something went wrong!');
-            }
-
-            const data = await response.json();
-            return data;
-        };
-
         if (poketex?.parent1) {
             fetchParent(poketex.parent1)
                 .then((data) => setParent1Data(data))
@@ -163,6 +105,111 @@ export const PoketexPage = () => {
                 .catch((error) => console.error('Error fetching parent2:', error));
         }
     }, [poketex, poketexId]);
+
+
+
+    // Load all comments
+    useEffect(() => {
+        const fetchAndSetComments = async () => {
+            try {
+                const loadedComments = await fetchComments(poketexId);
+                let weightedStarComments: number = 0;
+
+                for (const comment of loadedComments) {
+                    weightedStarComments += comment.rating;
+                }
+
+                if (loadedComments.length > 0) {
+                    const round = (Math.round((weightedStarComments / loadedComments.length) * 2) / 2).toFixed(1);
+                    setTotalStars(Number(round));
+                }
+
+                setComments(loadedComments);
+                setIsLoadingComment(false);
+            } catch (error) {
+                console.error(error);
+                setComments([]);
+                setCommentsError('The comments are not showing!');
+                setIsLoadingComment(false);
+            }
+        };
+
+        fetchAndSetComments();
+    }, [isCommentLeft, poketexId]);
+
+
+
+
+    // Load if user has left a comment
+    useEffect(() => {
+        fetchUserCommentPokemon(authState, poketexId)
+            .then((userCommentResponseJson) => {
+                setIsCommentLeft(userCommentResponseJson);
+            })
+            .catch((error: any) => {
+                setCommentsError(error);
+            });
+    }, [authState, poketexId])
+
+
+
+    // Submit Comment
+    async function submitComment(starInput: number, commentDescription: string) {
+        let pokemonId: number = 0;
+        if (poketex?.id) {
+            pokemonId = poketex.id;
+        }
+
+        const commentRequestModel = new CommentRequestModel(pokemonId, starInput, commentDescription);
+        const url = `http://localhost:8086/commentapi/comments/`;
+        const requestOptons = {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${authState.accessToken?.accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(commentRequestModel)
+        };
+        const response = await fetch(url, requestOptons);
+        if (!response.ok) {
+            throw new Error('Something went wrong!');
+        }
+        setIsCommentLeft(true);
+    }
+
+
+
+    //LOAD RELATED POKEMONS
+    const [relatedPoketexes, setRelatedPoketexes] = useState<PoketexModel[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [poketexesPerPage] = useState(8);
+    const [totalAmountOfRelatedPoketexes, setTotalAmountOfRelatedPoketexes] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+
+
+    //LOAD RELATED POKEMONS
+    useEffect(() => {
+        const fetchAndSetRelatedPokemons = async () => {
+            try {
+                const { relatedPoketexes, totalAmountOfRelatedPoketexes, totalPages } = await fetchRelatedPokemons(currentPage, poketexesPerPage, poketex);
+
+                setRelatedPoketexes(relatedPoketexes);
+                setTotalAmountOfRelatedPoketexes(totalAmountOfRelatedPoketexes);
+                setTotalPages(totalPages);
+                setIsLoading(false);
+            } catch (error) {
+                console.error(error);
+                setIsLoading(false);
+            }
+        };
+
+        fetchAndSetRelatedPokemons();
+    }, [currentPage, poketex]);
+
+
+
+
+
 
 
 
@@ -197,184 +244,6 @@ export const PoketexPage = () => {
 
 
 
-
-    // Load all comments
-    useEffect(() => {
-        const fetchComments = async () => {
-            const commentUrl: string = 'http://localhost:8086/commentapi/comments/search/findByPokemonId?pokemonId=' + poketexId;
-
-            try {
-                const responseComment = await fetch(commentUrl);
-                if (!responseComment.ok) {
-                    console.error('The comments are not showing!');
-                    setComments([]);
-                    setIsLoadingComment(false);
-                    return;
-                }
-                const responseJsonComments = await responseComment.json();
-                const responseData = responseJsonComments._embedded.comments;
-                const loadedComments: CommentModel[] = [];
-                let weightedStarComments: number = 0;
-                for (const key in responseData) {
-                    loadedComments.push({
-                        id: responseData[key].id,
-                        userName: responseData[key].userName,
-                        date: responseData[key].date,
-                        rating: responseData[key].rating,
-                        pokemonId: responseData[key].pokemonId,
-                        commentDescription: responseData[key].commentDescription
-                    });
-                    weightedStarComments += responseData[key].rating;
-                }
-                if (loadedComments) {
-                    const round = (Math.round((weightedStarComments / loadedComments.length) * 2) / 2).toFixed(1);
-                    setTotalStars(Number(round));
-                }
-                setComments(loadedComments);
-                setIsLoadingComment(false);
-            } catch (error) {
-                console.error(error);
-                setComments([]);
-                setCommentsError('The comments are not showing!');
-                setIsLoadingComment(false);
-            }
-        };
-        fetchComments();
-    }, [isCommentLeft, poketexId]);
-
-
-
-
-    // Load if user has left a comment
-    useEffect(() => {
-        const fetchUserCommentPokemon = async () => {
-            if (authState && authState.isAuthenticated) {
-                const url = `http://localhost:8086/commentapi/comments/user/pokemon?pokemonId=${poketexId}`;
-                const requestOptons = {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${authState.accessToken?.accessToken}`,
-                        'Content-Type': 'application/json',
-                    }
-                };
-                const userComment = await fetch(url, requestOptons);
-                if (!userComment.ok) {
-                    throw new Error('Something went wrong!');
-                }
-                const userCommentResponseJson = await userComment.json();
-                setIsCommentLeft(userCommentResponseJson);
-            }
-        }
-        fetchUserCommentPokemon().catch((error: any) => {
-            setCommentsError('Something went wrong!');
-        })
-    }, [authState, poketexId])
-
-
-
-
-    // Submit Comment
-    async function submitComment(starInput: number, commentDescription: string) {
-        let pokemonId: number = 0;
-        if (poketex?.id) {
-            pokemonId = poketex.id;
-        }
-
-        const commentRequestModel = new CommentRequestModel(pokemonId, starInput, commentDescription);
-        const url = `http://localhost:8086/commentapi/comments/`;
-        const requestOptons = {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${authState.accessToken?.accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(commentRequestModel)
-        };
-        const response = await fetch(url, requestOptons);
-        if (!response.ok) {
-            throw new Error('Something went wrong!');
-        }
-        setIsCommentLeft(true);
-    }
-
-
-
-
-    //LOAD RELATED POKEMONS
-    const [relatedPoketexes, setRelatedPoketexes] = useState<PoketexModel[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [poketexesPerPage] = useState(8);
-    const [totalAmountOfRelatedPoketexes, setTotalAmountOfRelatedPoketexes] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-
-
-    //LOAD RELATED POKEMONS
-    useEffect(() => {
-        const fetchRelatedPokemons = async () => {
-            const serachNameAndPrompt = poketex?.name + ' ' + poketex?.prompt;
-            const searchWords = serachNameAndPrompt?.trim().split(/\s+/) ?? [];
-            const stopWords = ['a', 'the', 'an', 'and', 'or', 'in', 'on', 'at', 'with', 'by', 'made', 'without'];
-            const filteredPrompt = searchWords.filter(word => !stopWords.includes(word.toLowerCase()));
-
-
-            let baseUrl: string = `http://localhost:8084/api/related?prompt=${filteredPrompt}`;
-            const url: string = `${baseUrl}&page=${currentPage - 1}&size=${poketexesPerPage}`;
-
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('The Servers are down. Please try again later.');
-            }
-            const responseJson = await response.json();
-
-            let responseData;
-            responseData = responseJson.content;
-
-            const loadedPoketexes: PoketexModel[] = [];
-            for (const key in responseData) {
-
-                const data = responseData[key];
-                const id: number = data.id;
-
-                if (id === poketex?.id) {
-                    continue;
-                }
-
-                const poketexRelated = new PoketexModel(
-                    id, data.name, data.username,
-                    data.description, data.image, data.seed,
-                    data.prompt, data.steps, data.generation,
-                    data.abilities, data.type1, data.type2,
-                    data.hp, data.attack, data.spAttack,
-                    data.defense, data.spDefense, data.speed,
-                    data.baseTotal, data.baseEggSteps, data.experienceGrowth, data.parent1, data.parent2,
-                );
-                loadedPoketexes.push(poketexRelated);
-            }
-
-            setTotalAmountOfRelatedPoketexes(responseJson.totalElements - 1);
-            setTotalPages(responseJson.totalPages);
-            setRelatedPoketexes(loadedPoketexes);
-            setIsLoading(false);
-
-        };
-        fetchRelatedPokemons().catch((error: any) => {
-            setIsLoading(false);
-        })
-
-
-
-    }, [currentPage, poketex]);
-
-
-
-
-
     // PAGINATION
     const indexOfLastPoketex: number = currentPage * poketexesPerPage;
     const indexOfFirstPoketex: number = indexOfLastPoketex - poketexesPerPage;
@@ -384,22 +253,6 @@ export const PoketexPage = () => {
 
     const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-
-
-
-    if (isLoading) {
-        return (
-            <SpinnerLoading />
-        )
-    }
-
-    if (poketexError) {
-        return (
-            <div className='container m-5'>
-                <p>{poketexError}</p>
-            </div>
-        )
-    }
 
 
 
@@ -418,14 +271,18 @@ export const PoketexPage = () => {
     }
 
 
-
-
-
-
-
-
-
-
+    if (isLoading) {
+        return (
+            <SpinnerLoading />
+        )
+    }
+    if (poketexError) {
+        return (
+            <div className='container m-5'>
+                <p>{poketexError}</p>
+            </div>
+        )
+    }
     return (
         <div>
             <div className='container d-none d-lg-block'>

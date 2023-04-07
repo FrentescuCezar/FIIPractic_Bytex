@@ -3,6 +3,7 @@ import PoketexModel from '../../models/PoketexModel'
 import { SpinnerLoading } from '../Utils/SpinnerLoading'
 import { Pagination } from '../Utils/Pagination'
 import { UserPokemons } from './Components/UserPokemons'
+import fetchPoketex from './Api/fetchRelatedPoketex'
 
 
 
@@ -14,76 +15,23 @@ export const UserPage = () => {
     const [poketexesPerPage] = useState(8);
     const [totalAmountOfPoketexes, setTotalAmountOfPoketexes] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const [search, setSearch] = useState('');
-    const [searchUrl, setSearchUrl] = useState('');
 
     const poketexUsername = (window.location.pathname).split("/")[2];
 
 
     useEffect(() => {
-        const fetchPoketex = async () => {
-
-            let baseUrl: string = `http://localhost:8084/api/poketex/user?username=${poketexUsername}`;
-            let url: string = ``;
-
-            if (searchUrl === '') {
-                url = `${baseUrl}&page=${currentPage - 1}&size=${poketexesPerPage}`;
-            } else {
-                let searchWithPage = searchUrl.replace('<pageNumber>', `${currentPage - 1}`);
-                baseUrl = "http://localhost:8084";
-                url = baseUrl + searchWithPage;
-            }
-
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    accept: 'application/json',
-                },
+        fetchPoketex(currentPage, poketexUsername, poketexesPerPage)
+            .then((result) => {
+                setPoketexes(result.loadedPoketexes);
+                setIsLoading(false);
+                setTotalAmountOfPoketexes(result.totalAmountOfPoketexes);
+                setTotalPages(result.totalPages);
+            })
+            .catch((error) => {
+                setIsLoading(false);
+                setHttpError(error.message);
             });
-
-            if (!response.ok) {
-                throw new Error('The Servers are down. Please try again later.');
-            }
-            const responseJson = await response.json();
-
-            let responseData;
-            responseData = responseJson.content;
-            setTotalAmountOfPoketexes(responseJson.totalElements);
-            setTotalPages(responseJson.totalPages);
-
-
-
-            const loadedPoketexes: PoketexModel[] = [];
-            for (const key in responseData) {
-
-                const data = responseData[key];
-                let id: number;
-                id = data.id;
-
-
-                const poketex = new PoketexModel(
-                    id, data.name, data.username, // Use the extracted ID here
-                    data.description, data.image, data.seed,
-                    data.prompt, data.steps, data.generation,
-                    data.abilities, data.type1, data.type2,
-                    data.hp, data.attack, data.spAttack,
-                    data.defense, data.spDefense, data.speed,
-                    data.baseTotal, data.baseEggSteps, data.experienceGrowth, data.parent1, data.parent2
-                );
-                loadedPoketexes.push(poketex);
-            }
-
-            setPoketexes(loadedPoketexes);
-            setIsLoading(false);
-
-        };
-        fetchPoketex().catch((error: any) => {
-            setIsLoading(false);
-            setHttpError(error.message);
-
-        })
-    }, [currentPage, searchUrl]);
-
+    }, [currentPage]);
 
 
 
@@ -101,25 +49,6 @@ export const UserPage = () => {
         )
     }
 
-    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            searchHandleChange();
-        }
-    };
-
-    const searchHandleChange = () => {
-        setCurrentPage(1);
-
-        if (search === '') {
-            setSearchUrl('');
-        } else {
-            const searchWords = search.trim().split(/\s+/);
-            const stopwords = ['a', 'the', 'an', 'and', 'or', 'in', 'on', 'at', 'with', 'by', 'made', 'without'];
-            const filteredWords = searchWords.filter(word => !stopwords.includes(word.toLowerCase()));
-            console.log(`/api/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
-            setSearchUrl(`/api/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
-        }
-    }
 
     const indexOfLastPoketex: number = currentPage * poketexesPerPage;
     const indexOfFirstPoketex: number = indexOfLastPoketex - poketexesPerPage;
