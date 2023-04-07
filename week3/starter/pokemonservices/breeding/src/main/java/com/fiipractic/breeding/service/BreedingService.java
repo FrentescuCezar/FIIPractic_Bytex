@@ -134,7 +134,7 @@ public class BreedingService {
     }
 
     private String getNewGeneratedImage(String parent1Image,String prompt, String negativePrompt, Integer steps, Long seed) throws JsonProcessingException {
-        String apiUrl = "http://localhost:8081/api/ImageToImage";
+        String apiUrl = "http://localhost:8081/api/imageToImage";
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -157,12 +157,6 @@ public class BreedingService {
         return response;
     }
 
-    private String getPokemonImageById(Integer id) {
-        String url = "http://localhost:8084/api/poketex/" + id + "/image";
-        RestTemplate restTemplate = new RestTemplate();
-        String base64Image = restTemplate.getForObject(url, String.class);
-        return base64Image;
-    }
 
     private Map<String, Object> getPokemonDetailsById(Integer id) {
         String url = "http://localhost:8084/api/poketexes/" + id;
@@ -174,7 +168,7 @@ public class BreedingService {
 
 
     private ResponseEntity<String> createPokemon(Map<String, Object> requestBody, String token) throws JsonProcessingException {
-        String createPokemonUrl = "http://localhost:8084/api/create";
+        String createPokemonUrl = "http://localhost:8084/api/poketex/create";
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

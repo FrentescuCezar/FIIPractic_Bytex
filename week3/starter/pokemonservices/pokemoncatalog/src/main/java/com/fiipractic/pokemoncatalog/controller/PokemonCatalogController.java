@@ -17,7 +17,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/poketex/")
 @JsonFormat
 @CrossOrigin(origins = "http://localhost:3000")
 public class PokemonCatalogController {
@@ -31,7 +31,7 @@ public class PokemonCatalogController {
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/poketex/recent")
+    @GetMapping(value = "recent")
     public Page<Poketex> getRecentPokemons(@RequestParam("page") int page,
                                            @RequestParam("size") int size) {
         return pokemonCatalogService.findAllByOrderByIdDesc(page, size);
@@ -39,14 +39,14 @@ public class PokemonCatalogController {
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/poketex/random")
+    @GetMapping(value = "random")
     public Page<Poketex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
         return pokemonCatalogService.findRandomPokemons(limit);
     }
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/poketex/user/random")
+    @GetMapping(value = "user/random")
     public Page<Poketex> getRandomPokemonsByUsername(@RequestParam(value = "username") String username, @RequestParam(value = "limit") Integer limit) {
         return pokemonCatalogService.findRandomPokemonsByUsername(username, limit);
     }
@@ -54,7 +54,7 @@ public class PokemonCatalogController {
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/userPokemons")
+    @GetMapping(value = "/user")
     public Page<Poketex> getUserPokemons(@RequestParam(value = "username") String username,
                                          @RequestParam("page") int page,
                                          @RequestParam("size") int size) {
@@ -74,13 +74,13 @@ public class PokemonCatalogController {
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/pokemon-list")
+    @PostMapping("/pokemonList")
     public List<Poketex> getOrderedPokemonDetailsByIds(@RequestBody List<Integer> pokemonIds) {
         return pokemonCatalogService.getOrderedPokemonDetailsByIds(pokemonIds);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/poketex/{id}/image")
+    @GetMapping("/{id}/image")
     public ResponseEntity<String> getPokemonImageById(@PathVariable("id") Integer id) {
         Optional<Poketex> poketex = pokemonCatalogService.findById(id);
 

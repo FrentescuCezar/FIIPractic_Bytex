@@ -3,15 +3,11 @@ package com.fiipractic.whos.that.pokemon.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class WhosThatPokemonService {
@@ -30,7 +26,7 @@ public class WhosThatPokemonService {
         JsonNode responseBody = response.getBody();
         JsonNode contentNode = responseBody.get("content");
         return objectMapper.writeValueAsString(contentNode.get(0));
-   
+
     }
 
     public String getPokemonById(Integer pokemonId) throws JsonProcessingException {

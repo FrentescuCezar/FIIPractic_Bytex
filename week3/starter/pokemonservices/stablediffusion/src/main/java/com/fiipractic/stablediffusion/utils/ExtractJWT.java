@@ -1,4 +1,4 @@
-package com.fiipractic.comment.utils;
+package com.fiipractic.stablediffusion.utils;
 
 import java.util.Base64;
 import java.util.HashMap;

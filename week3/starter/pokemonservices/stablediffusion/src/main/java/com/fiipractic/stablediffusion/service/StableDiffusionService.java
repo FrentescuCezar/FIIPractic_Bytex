@@ -5,10 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.utils.JsonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
@@ -19,18 +18,11 @@ import java.util.*;
 @Service
 public class StableDiffusionService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StableDiffusionService.class);
-
-
-    private final StableDiffusionRepository stableDiffusionRepository;
-
-    public StableDiffusionService(StableDiffusionRepository stableDiffusionRepository) {
-        this.stableDiffusionRepository = stableDiffusionRepository;
+    @Autowired
+    public StableDiffusionService() {
     }
 
-
-
-    public String generateTextToImage(String prompt, Optional<Long> seed,Optional<String> negativePrompt, int batch_size, int steps) throws JsonProcessingException {
+    public String generateTextToImage(String prompt, Optional<Long> seed, Optional<String> negativePrompt, int batch_size, int steps) throws JsonProcessingException {
         String txt2imgUrl = "http://127.0.0.1:7861/sdapi/v1/txt2img";
 
         ResponseEntity<String> response = submitTextToImagePost(txt2imgUrl, prompt, seed, negativePrompt, batch_size, steps);

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fiipractic.stablediffusion.requestmodel.ImageToImageRequest;
 import com.fiipractic.stablediffusion.requestmodel.TextToImageRequest;
 
-import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,13 @@ public class StableDiffusionController {
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping(value = "/trial")
+    @PostMapping(value = "/textToImage")
     public String trial(@RequestBody TextToImageRequest imageRequest) throws Exception {
         return stableDiffusionService.generateTextToImage(imageRequest.getPrompt(), Optional.ofNullable(imageRequest.getSeed()), Optional.ofNullable(imageRequest.getNegativePrompt()), 1, imageRequest.getSteps());
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping(value = "/ImageToImage")
+    @PostMapping(value = "/imageToImage")
     public String ImagetoImage(@RequestBody ImageToImageRequest imageRequest) throws Exception {
         return stableDiffusionService.generateImageToImage(imageRequest.getImage(), imageRequest.getPrompt(), Optional.ofNullable(imageRequest.getNegativePrompt()), imageRequest.getSteps(), imageRequest.getSeed());
     }

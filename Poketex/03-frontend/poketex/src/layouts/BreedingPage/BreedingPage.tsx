@@ -79,7 +79,7 @@ export const BreedingPage = () => {
     useEffect(() => {
         const fetchPoketex = async () => {
 
-            let baseUrl: string = `http://localhost:8084/api/userPokemons?username=${poketexUsername}`;
+            let baseUrl: string = `http://localhost:8084/api/poketex/user?username=${poketexUsername}`;
             let url: string = ``;
 
             if (searchUrl === '') {

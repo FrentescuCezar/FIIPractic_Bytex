@@ -15,7 +15,7 @@ export async function submitPrompt(
 ) {
     setIsImageLoading(true);
     const imageRequestModel = new ImageRequestModel(steps, prompt, seed, negativePrompt);
-    const url = `http://localhost:8081/api/trial`;
+    const url = `http://localhost:8081/api/textToImage`;
     const requestOptions = {
         method: "POST",
         headers: {
@@ -106,7 +106,7 @@ export async function submitPokemon(
 ) {
     const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed, generation, negativePrompt, parent1, parent2);
 
-    const url = `http://localhost:8084/api/create`;
+    const url = `http://localhost:8084/api/poketex/create`;
     const requestOptons = {
         method: 'POST',
         headers: {

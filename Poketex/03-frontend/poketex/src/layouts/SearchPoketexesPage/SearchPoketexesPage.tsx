@@ -120,8 +120,8 @@ export const SearchPoketexesPage = () => {
             const searchWords = search.trim().split(/\s+/);
             const stopwords = ['a', 'the', 'an', 'and', 'or', 'in', 'on', 'at', 'with', 'by', 'made', 'without'];
             const filteredWords = searchWords.filter(word => !stopwords.includes(word.toLowerCase()));
-            console.log(`/api/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
-            setSearchUrl(`/api/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
+            console.log(`/api/poketex/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
+            setSearchUrl(`/api/poketex/related?prompt=${filteredWords}&page=<pageNumber>&size=${poketexesPerPage}`);
         }
     }
 

@@ -26,7 +26,7 @@ export const Carousel = () => {
 
 
             const pokemonDetailsUrl: string =
-                "http://localhost:8084/api/pokemon-list";
+                "http://localhost:8084/api/poketex/pokemonList";
             const pokemonDetailsResponse = await fetch(pokemonDetailsUrl, {
                 method: "POST",
                 headers: {
