@@ -52,7 +52,7 @@ export const MonBuilderPage = () => {
     async function submitPrompt(steps: number, prompt: string, seed?: number, negativePrompt?: string) {
         setIsImageLoading(true);
         const imageRequestModel = new ImageRequestModel(steps, prompt, seed, negativePrompt);
-        const url = `http://localhost:8084/api/trial`;
+        const url = `http://localhost:8081/api/trial`;
         const requestOptions = {
             method: "POST",
             headers: {

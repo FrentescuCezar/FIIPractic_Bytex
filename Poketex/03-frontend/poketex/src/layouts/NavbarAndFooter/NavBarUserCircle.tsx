@@ -30,7 +30,7 @@ const UserCircle: React.FC<UserCircleProps> = ({ onLogout, username }) => {
         }
 
         const responseJson = await response.json();
-        console.log("caca")
+
 
         let responseData;
         responseData = responseJson.content;

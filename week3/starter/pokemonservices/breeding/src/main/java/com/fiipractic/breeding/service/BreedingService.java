@@ -136,7 +136,7 @@ public class BreedingService {
     }
 
     private String getNewGeneratedImage(String parent1Image,String prompt, String negativePrompt, Integer steps, Long seed) throws JsonProcessingException {
-        String apiUrl = "http://localhost:8084/api/ImageToImage";
+        String apiUrl = "http://localhost:8081/api/ImageToImage";
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

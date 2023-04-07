@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 
 import PoketexModel from '../../models/PoketexModel';
 
@@ -34,12 +35,14 @@ export const PoketexPage = () => {
     }
 
     let JWTDecoded;
-    if (authState.isAuthenticated) {
+    if (authState && authState.isAuthenticated) {
         JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
     } else {
         JWTDecoded = { sub: "Not_Logged_In" };
     }
 
+
+    const { poketexId } = useParams<{ poketexId: string }>();
 
 
 
@@ -60,7 +63,6 @@ export const PoketexPage = () => {
     const [isLoadingComment, setIsLoadingComment] = useState<boolean>(true)
     const [commentsError, setCommentsError] = useState<string | null>(null);
 
-    const poketexId = (window.location.pathname).split("/")[2];
 
 
     const [isCommentLeft, setIsCommentLeft] = useState<boolean>(false);
@@ -130,7 +132,6 @@ export const PoketexPage = () => {
     }, [poketexId]);
 
 
-    // Load the parents
     useEffect(() => {
         const fetchParent = async (parentId: number) => {
             const response = await fetch(`http://localhost:8084/api/pokedexes/${parentId}`, {
@@ -159,7 +160,7 @@ export const PoketexPage = () => {
                 .then((data) => setParent2Data(data))
                 .catch((error) => console.error('Error fetching parent2:', error));
         }
-    }, [poketex]);
+    }, [poketex, poketexId]);
 
 
 

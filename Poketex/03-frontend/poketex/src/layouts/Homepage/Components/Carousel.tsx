@@ -41,8 +41,6 @@ export const Carousel = () => {
             }
             const pokemonDetails = await pokemonDetailsResponse.json();
 
-            console.log(pokemonDetails);
-
             setPoketexes(pokemonDetails);
             setIsLoading(false);
         };
@@ -74,7 +72,7 @@ export const Carousel = () => {
     const carouselItems = [];
     for (let i = 0; i < carouselItemCount; i++) {
         carouselItems.push(
-            <div className={`carousel-item ${i === 0 ? "active" : ""}`}>
+            <div key={`carousel-item-${i}`} className={`carousel-item ${i === 0 ? "active" : ""}`}>
                 <div className="row d-flex justify-content-center align-items-center">
                     {
                         poketexes.slice(i * 3, i * 3 + 3).map((poketex: PoketexModel) => {
