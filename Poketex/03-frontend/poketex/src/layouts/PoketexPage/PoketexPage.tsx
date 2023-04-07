@@ -21,10 +21,27 @@ import { Link } from 'react-router-dom';
 import PokemonStats from './Components/PoketexStats/PoketexStats';
 import Seed from './Components/PoketexStats/Seed';
 
+import jwt_decode from 'jwt-decode';
+
+
 export const PoketexPage = () => {
 
 
     const { authState } = useOktaAuth();
+
+    interface JwtPayload {
+        sub: string;
+    }
+
+    let JWTDecoded;
+    if (authState.isAuthenticated) {
+        JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
+    } else {
+        JWTDecoded = { sub: "Not_Logged_In" };
+    }
+
+
+
 
     const [poketex, setPoketex] = useState<PoketexModel>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -467,7 +484,7 @@ export const PoketexPage = () => {
                             <h3 className='text-center'>Want to breed with another Pokemon?</h3>
                             {authState?.isAuthenticated
                                 ?
-                                <Link to={`/user/${poketex?.username}/${poketex?.id}`}>
+                                <Link to={`/user/${JWTDecoded.sub}/${poketex?.id}`}>
                                     <button className='btn btn-primary mx-auto d-block'>Breed</button>
                                 </Link>
                                 :
@@ -551,7 +568,7 @@ export const PoketexPage = () => {
                             <></>
                         }
                         <h3 className='text-center'>Want to breed with another Pokemon?</h3>
-                        <Link to={`/user/${poketex?.username}/${poketex?.id}`}>
+                        <Link to={`/user/${JWTDecoded.sub}/${poketex?.id}`}>
                             <button className='btn btn-primary mx-auto d-block'>Breed</button>
                         </Link>
                     </div>
