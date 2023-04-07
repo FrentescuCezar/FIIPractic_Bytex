@@ -31,7 +31,7 @@ export const Navbar: React.FC<{}> = (props) => {
     let usernameWithoutAtSymbol;
 
 
-    if (authState.isAuthenticated) {
+    if (authState && authState.isAuthenticated) {
         JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
         usernameWithoutAtSymbol = extractNameFromEmail(JWTDecoded.sub);
     } else {

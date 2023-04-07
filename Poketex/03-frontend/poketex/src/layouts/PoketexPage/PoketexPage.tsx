@@ -23,6 +23,7 @@ import PokemonStats from './Components/PoketexStats/PoketexStats';
 import Seed from './Components/PoketexStats/Seed';
 
 import jwt_decode from 'jwt-decode';
+import { extractNameFromEmail } from '../Utils/PoketexDetailsUtils';
 
 
 export const PoketexPage = () => {
@@ -35,10 +36,15 @@ export const PoketexPage = () => {
     }
 
     let JWTDecoded;
+    let usernameWithoutAtSymbol;
+
+
     if (authState && authState.isAuthenticated) {
         JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
+        usernameWithoutAtSymbol = extractNameFromEmail(JWTDecoded.sub);
     } else {
         JWTDecoded = { sub: "Not_Logged_In" };
+        usernameWithoutAtSymbol = "Not_Logged_In";
     }
 
 
@@ -477,7 +483,7 @@ export const PoketexPage = () => {
                             <h3 className='text-center'>Want to breed with another Pokemon?</h3>
                             {authState?.isAuthenticated
                                 ?
-                                <Link to={`/user/${JWTDecoded.sub}/pokemon/${poketex?.id}`}>
+                                <Link to={`/user/${usernameWithoutAtSymbol}/pokemon/${poketex?.id}`}>
                                     <button className='btn btn-primary mx-auto d-block'>Breed</button>
                                 </Link>
                                 :
@@ -561,7 +567,7 @@ export const PoketexPage = () => {
                             <></>
                         }
                         <h3 className='text-center'>Want to breed with another Pokemon?</h3>
-                        <Link to={`/user/${JWTDecoded.sub}/${poketex?.id}`}>
+                        <Link to={`/user/${usernameWithoutAtSymbol}/${poketex?.id}`}>
                             <button className='btn btn-primary mx-auto d-block'>Breed</button>
                         </Link>
                     </div>

@@ -75,9 +75,9 @@ export const App = () => {
             </Route>
 
 
-            <Route path='/user/:userName/:userName' component={UserPage}>
-              <UserPage />
-            </Route>
+            <Route exact path='/user/:userName/:userName' render={({ match }) => (
+              <Redirect to={`/user/${match.params.userName}`} />
+            )} />
 
             <Route path='/user/:userName' component={UserPage}>
               <UserPage />

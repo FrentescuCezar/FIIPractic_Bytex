@@ -32,8 +32,6 @@ public class BreedingService {
         String token = breedRequest.getToken(); // Extract the token
 
 
-
-
         Map<String, Object> parent1Details = getPokemonDetailsById(parent1);
         Map<String, Object> parent2Details = getPokemonDetailsById(parent2);
 
@@ -76,7 +74,7 @@ public class BreedingService {
         requestBody.put("description", generatedDescription);
         requestBody.put("prompt", promptParent1 + " + " + promptParent2);
 
-        String negativePrompt = null;
+        String negativePrompt;
         if (negativePromptParent1 != null && negativePromptParent2 != null) {
             negativePrompt = negativePromptParent1 + " " + negativePromptParent2;
             requestBody.put("negativePrompt", negativePrompt);

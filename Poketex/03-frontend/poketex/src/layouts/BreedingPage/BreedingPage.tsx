@@ -26,7 +26,7 @@ export const BreedingPage = () => {
     const [searchUrl, setSearchUrl] = useState('');
 
     const poketexUsername = (window.location.pathname).split("/")[2];
-    const parent1 = (window.location.pathname).split("/")[3];
+    const parent1 = (window.location.pathname).split("/")[4];
 
     const breedPokemon = async (selectedParentId: number) => {
         if (!authState.isAuthenticated) {
@@ -45,6 +45,8 @@ export const BreedingPage = () => {
             token,
         };
 
+        console.log(body)
+
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -54,6 +56,8 @@ export const BreedingPage = () => {
                 },
                 body: JSON.stringify(body),
             });
+
+
 
             if (!response.ok) {
                 throw new Error('Failed to breed Pokémon.');
