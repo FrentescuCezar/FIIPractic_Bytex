@@ -11,10 +11,15 @@ export function truncateText(text: string, maxLength: number) {
 }
 
 
-export function maskString(input: string, probability: number = 0.69): string {
-    return input.replace(/[a-zA-Z0-9]/g, (char) => {
+export function maskString(input: string, probability: number = 0.5): string {
+    let output = input.replace(/[a-zA-Z0-9]/g, (char) => {
         return Math.random() < probability ? "?" : char;
     });
+    if (!output.includes("?")) {
+        const position = Math.floor(Math.random() * (output.length + 1));
+        output = output.slice(0, position) + "?" + output.slice(position);
+    }
+    return output;
 }
 
 export function maskName(name: string): string {

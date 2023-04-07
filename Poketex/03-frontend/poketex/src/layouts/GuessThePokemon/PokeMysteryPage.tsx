@@ -5,7 +5,6 @@ import { fetchPoketex, postGuess } from "./Api/pokeMysteryApi";
 import {
     truncateText,
     maskName,
-    maskUsername,
     maskPrompt,
 } from "./Utils/pokeMysteryUtils";
 import { formatTextWithNewlines } from "./Utils/PokeMysteryUtils2";
