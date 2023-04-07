@@ -465,9 +465,17 @@ export const PoketexPage = () => {
                         }
                         <div className='my-5'>
                             <h3 className='text-center'>Want to breed with another Pokemon?</h3>
-                            <Link to={`/user/${poketex?.username}/${poketex?.id}`}>
-                                <button className='btn btn-primary mx-auto d-block'>Breed</button>
-                            </Link>
+                            {authState?.isAuthenticated
+                                ?
+                                <Link to={`/user/${poketex?.username}/${poketex?.id}`}>
+                                    <button className='btn btn-primary mx-auto d-block'>Breed</button>
+                                </Link>
+                                :
+                                <Link to={`/login`}>
+                                    <button className='btn btn-primary mx-auto d-block'>Breed</button>
+                                </Link>
+                            }
+
                         </div>
                     </div>
                     <CommentBox poketex={poketex}
