@@ -8,6 +8,7 @@ import NavBarUserCircle from './NavBarUserCircle';
 
 import jwt_decode from 'jwt-decode';
 import { LatestComments } from '../PoketexPage/Components/Comments/LatestComments';
+import { extractNameFromEmail } from '../Utils/PoketexDetailsUtils';
 
 
 interface JwtPayload {
@@ -28,15 +29,11 @@ export const Navbar: React.FC<{}> = (props) => {
     const handleLogout = async () => oktaAuth.signOut();
     let JWTDecoded;
     let usernameWithoutAtSymbol;
+
+
     if (authState.isAuthenticated) {
         JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
-
-        const atIndex = (JWTDecoded.sub)?.indexOf('@');
-        if (atIndex !== undefined && atIndex >= 0) {
-            usernameWithoutAtSymbol = (JWTDecoded.sub)!.slice(0, atIndex);
-        } else {
-            usernameWithoutAtSymbol = 'UsernameNotFound';
-        }
+        usernameWithoutAtSymbol = extractNameFromEmail(JWTDecoded.sub);
     } else {
         JWTDecoded = { sub: "Not_Logged_In" };
         usernameWithoutAtSymbol = "Not_Logged_In";
