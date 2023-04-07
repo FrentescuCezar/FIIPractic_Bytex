@@ -66,10 +66,6 @@ export const PoketexPage = () => {
 
 
     const [isCommentLeft, setIsCommentLeft] = useState<boolean>(false);
-    const [firstTimeLoadingThePage, setFirstTimeLoadingThePage] = useState<boolean>(true);
-
-
-
 
 
 
@@ -80,7 +76,7 @@ export const PoketexPage = () => {
 
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-            const baseUrl: string = `http://localhost:8084/api/pokedexes/${poketexId}`;
+            const baseUrl: string = `http://localhost:8084/api/poketexes/${poketexId}`;
             const response = await fetch(baseUrl, {
                 method: 'GET',
                 headers: {
@@ -134,7 +130,7 @@ export const PoketexPage = () => {
 
     useEffect(() => {
         const fetchParent = async (parentId: number) => {
-            const response = await fetch(`http://localhost:8084/api/pokedexes/${parentId}`, {
+            const response = await fetch(`http://localhost:8084/api/poketexes/${parentId}`, {
                 method: 'GET',
                 headers: {
                     accept: 'application/json',
@@ -365,11 +361,7 @@ export const PoketexPage = () => {
             setIsLoading(false);
         })
 
-        if (firstTimeLoadingThePage) {
-            setFirstTimeLoadingThePage(false);
-        } else {
-            //window.scrollTo(0, 1200);  //THIS IS IF YOU WANT TO SCROLL TO TOP WHEN YOU CHANGE PAGE FGM
-        }
+
 
     }, [currentPage, poketex]);
 
@@ -485,7 +477,7 @@ export const PoketexPage = () => {
                             <h3 className='text-center'>Want to breed with another Pokemon?</h3>
                             {authState?.isAuthenticated
                                 ?
-                                <Link to={`/user/${JWTDecoded.sub}/${poketex?.id}`}>
+                                <Link to={`/user/${JWTDecoded.sub}/pokemon/${poketex?.id}`}>
                                     <button className='btn btn-primary mx-auto d-block'>Breed</button>
                                 </Link>
                                 :

@@ -1,12 +1,10 @@
 package com.fiipractic.whos.that.pokemon.service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fiipractic.pokemoncatalog.model.Pokedex;
+import com.fiipractic.pokemoncatalog.model.Poketex;
 import com.fiipractic.whos.that.pokemon.model.CustomResponseWrapper;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,13 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class WhosThatPokemonService extends PageImpl<Pokedex> {
+public class WhosThatPokemonService extends PageImpl<Poketex> {
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public WhosThatPokemonService(List<Pokedex> content, Pageable pageable, long total) {
+    public WhosThatPokemonService(List<Poketex> content, Pageable pageable, long total) {
         super(content, pageable, total);
     }
 
-    public WhosThatPokemonService(List<Pokedex> content) {
+    public WhosThatPokemonService(List<Poketex> content) {
         super(content);
     }
 
@@ -29,7 +27,7 @@ public class WhosThatPokemonService extends PageImpl<Pokedex> {
         super(Arrays.asList());
     }
 
-    public Pokedex getRandomPokemon() {
+    public Poketex getRandomPokemon() {
         RestTemplate restTemplate = new RestTemplate();
 
         int limit = 1;
@@ -45,10 +43,10 @@ public class WhosThatPokemonService extends PageImpl<Pokedex> {
         }
     }
 
-    public Pokedex getPokemonById(Integer pokemonId) {
+    public Poketex getPokemonById(Integer pokemonId) {
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:8084/api/pokedexes/" + pokemonId;
-        ResponseEntity<Pokedex> response = restTemplate.getForEntity(url, Pokedex.class);
+        ResponseEntity<Poketex> response = restTemplate.getForEntity(url, Poketex.class);
         return response.getBody();
     }
 

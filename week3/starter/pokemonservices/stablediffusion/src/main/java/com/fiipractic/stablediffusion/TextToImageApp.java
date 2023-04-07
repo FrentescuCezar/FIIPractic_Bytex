@@ -2,13 +2,8 @@ package com.fiipractic.stablediffusion;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fiipractic.pokemoncatalog.model.Pokedex;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Base64;
 
 public class TextToImageApp {
 

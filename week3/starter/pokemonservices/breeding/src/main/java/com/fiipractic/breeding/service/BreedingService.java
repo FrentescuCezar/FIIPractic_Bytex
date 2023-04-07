@@ -160,14 +160,14 @@ public class BreedingService {
     }
 
     private String getPokemonImageById(Integer id) {
-        String url = "http://localhost:8084/api/pokedex/" + id + "/image";
+        String url = "http://localhost:8084/api/poketex/" + id + "/image";
         RestTemplate restTemplate = new RestTemplate();
         String base64Image = restTemplate.getForObject(url, String.class);
         return base64Image;
     }
 
     private Map<String, Object> getPokemonDetailsById(Integer id) {
-        String url = "http://localhost:8084/api/pokedexes/" + id;
+        String url = "http://localhost:8084/api/poketexes/" + id;
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> pokemonDetails = restTemplate.getForObject(url, Map.class);
         return pokemonDetails;

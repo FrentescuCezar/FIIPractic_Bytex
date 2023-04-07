@@ -1,6 +1,6 @@
 package com.fiipractic.whos.that.pokemon.controller;
 
-import com.fiipractic.pokemoncatalog.model.Pokedex;
+import com.fiipractic.pokemoncatalog.model.Poketex;
 
 import com.fiipractic.whos.that.pokemon.service.WhosThatPokemonService;
 
@@ -28,15 +28,15 @@ public class WhosThatPokemonController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/")
-    public Pokedex whosThatPokemon() {
-        Pokedex pokemon = whosThatPokemonService.getRandomPokemon();
+    public Poketex whosThatPokemon() {
+        Poketex pokemon = whosThatPokemonService.getRandomPokemon();
         return pokemon;
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/guess", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> guessPokemon(@RequestParam String guess, @RequestParam Integer pokemonIndex) {
-        Pokedex pokemon = whosThatPokemonService.getPokemonById(pokemonIndex);
+        Poketex pokemon = whosThatPokemonService.getPokemonById(pokemonIndex);
         String result;
         String[] promptArray = pokemon.getPrompt().split(" ");
 

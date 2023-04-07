@@ -7,8 +7,7 @@ import com.fiipractic.stablediffusion.requestmodel.TextToImageRequest;
 
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import com.fiipractic.stablediffusion.service.StableDiffusionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,16 +20,11 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 public class StableDiffusionController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StableDiffusionController.class);
-
-    @Autowired
     private final StableDiffusionService stableDiffusionService;
 
-    private final StableDiffusionRepository stableDiffusionRepository;
-
-    public StableDiffusionController(StableDiffusionService stableDiffusionService, StableDiffusionRepository stableDiffusionRepository) {
+    @Autowired
+    public StableDiffusionController(StableDiffusionService stableDiffusionService) {
         this.stableDiffusionService = stableDiffusionService;
-        this.stableDiffusionRepository = stableDiffusionRepository;
     }
 
 

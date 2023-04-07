@@ -21,7 +21,7 @@ export const SearchPoketexesPage = () => {
     useEffect(() => {
         const fetchPoketex = async () => {
 
-            let baseUrl: string = "http://localhost:8084/api/pokedex/recent";
+            let baseUrl: string = "http://localhost:8084/api/poketex/recent";
             let url: string = ``;
 
             if (searchUrl === '') {

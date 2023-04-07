@@ -14,7 +14,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-public class Pokedex {
+public class Poketex {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
@@ -50,7 +50,7 @@ public class Pokedex {
     @Column(columnDefinition = "experience_growth")
     private Integer experienceGrowth;
 
-    public Pokedex(String username, String name, String description, String image, Long seed, String prompt, String negativePrompt, Integer steps, Integer generation, List<String> abilities, Integer hp, Integer attack, Integer spAttack, Integer defense, Integer spDefense, Integer speed, Integer baseTotal, Integer baseEggSteps, Integer experienceGrowth) {
+    public Poketex(String username, String name, String description, String image, Long seed, String prompt, String negativePrompt, Integer steps, Integer generation, List<String> abilities, Integer hp, Integer attack, Integer spAttack, Integer defense, Integer spDefense, Integer speed, Integer baseTotal, Integer baseEggSteps, Integer experienceGrowth) {
         this.username = username;
         this.name = name;
         this.description = description;

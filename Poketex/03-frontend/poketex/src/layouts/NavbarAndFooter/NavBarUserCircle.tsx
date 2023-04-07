@@ -17,7 +17,7 @@ const UserCircle: React.FC<UserCircleProps> = ({ onLogout, username }) => {
     async function fetchPoketex() {
         //process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-        const baseUrl: string = `http://localhost:8084/api/pokedex/random/user?username=frentescucezar@gmail.com&limit=1`;
+        const baseUrl: string = `http://localhost:8084/api/poketex/user/random?username=frentescucezar@gmail.com&limit=1`;
         const response = await fetch(baseUrl, {
             method: "GET",
             headers: {

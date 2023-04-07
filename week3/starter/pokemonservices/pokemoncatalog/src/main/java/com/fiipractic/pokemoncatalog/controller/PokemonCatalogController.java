@@ -1,16 +1,12 @@
 package com.fiipractic.pokemoncatalog.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fiipractic.pokemoncatalog.model.Pokedex;
-import com.fiipractic.pokemoncatalog.repository.PokemonCatalogRepository;
+import com.fiipractic.pokemoncatalog.model.Poketex;
 import com.fiipractic.pokemoncatalog.requestmodel.PoketexRequest;
 import com.fiipractic.pokemoncatalog.service.PokemonCatalogService;
 import com.fiipractic.pokemoncatalog.utils.ExtractJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,72 +22,70 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PokemonCatalogController {
 
-    private final PokemonCatalogRepository pokemonCatalogRepository;
-    @Autowired
     private final PokemonCatalogService pokemonCatalogService;
 
-    public PokemonCatalogController(PokemonCatalogRepository pokemonCatalogRepository, PokemonCatalogService pokemonCatalogService) {
-        this.pokemonCatalogRepository = pokemonCatalogRepository;
+    @Autowired
+    public PokemonCatalogController(PokemonCatalogService pokemonCatalogService) {
         this.pokemonCatalogService = pokemonCatalogService;
     }
 
+
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/pokedex/recent")
-    public Page<Pokedex> getRecentPokemons(@RequestParam("page") int page,
+    @GetMapping(value = "/poketex/recent")
+    public Page<Poketex> getRecentPokemons(@RequestParam("page") int page,
                                            @RequestParam("size") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-        return pokemonCatalogRepository.findAllByOrderByIdDesc(pageable);
+        return pokemonCatalogService.findAllByOrderByIdDesc(page, size);
     }
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/pokedex/random")
-    public Page<Pokedex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
-        Pageable pageable = PageRequest.of(0, limit);
-        return pokemonCatalogRepository.getRandomPokemons(pageable);
+    @GetMapping(value = "/poketex/random")
+    public Page<Poketex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
+        return pokemonCatalogService.getRandomPokemons(limit);
     }
 
+
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/pokedex/random/user")
-    public Page<Pokedex> getRandomPokemonsByUsername(@RequestParam(value = "username") String username, @RequestParam(value = "limit") Integer limit) {
-        Pageable pageable = PageRequest.of(0, limit);
-        return pokemonCatalogRepository.getRandomPokemonByUsername(username, pageable);
+    @GetMapping(value = "/poketex/user/random")
+    public Page<Poketex> getRandomPokemonsByUsername(@RequestParam(value = "username") String username, @RequestParam(value = "limit") Integer limit) {
+        return pokemonCatalogService.getRandomPokemonByUsername(username, limit);
     }
+
+
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/userPokemons")
-    public Page<Pokedex> getUserPokemons(@RequestParam(value = "username") String username,
+    public Page<Poketex> getUserPokemons(@RequestParam(value = "username") String username,
                                          @RequestParam("page") int page,
                                          @RequestParam("size") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-        return pokemonCatalogRepository.findByUsername(username, pageable);
+        return pokemonCatalogService.findByUsername(username, page, size);
     }
+
+
+
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/related")
-    public Page<Pokedex> getRelatedPokemons(@RequestParam("prompt") String prompt,
+    public Page<Poketex> getRelatedPokemons(@RequestParam("prompt") String prompt,
                                             @RequestParam("page") int page,
                                             @RequestParam("size") int size) {
-        String joinedPrompt = String.join("|", prompt.replaceAll("[,;]", " ").split("\\s+"));
-        Pageable pageable = PageRequest.of(page, size);
-        return pokemonCatalogRepository.findRelatedPokemons(joinedPrompt, pageable);
+        return pokemonCatalogService.findRelatedPokemons(prompt, page, size);
     }
 
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/pokemon-list")
-    public List<Pokedex> getPokemonDetailsByIds(@RequestBody List<Integer> pokemonIds) {
-        return pokemonCatalogService.getPokemonDetailsByIds(pokemonIds);
+    public List<Poketex> getOrderedPokemonDetailsByIds(@RequestBody List<Integer> pokemonIds) {
+        return pokemonCatalogService.getOrderedPokemonDetailsByIds(pokemonIds);
     }
 
-
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/pokedex/{id}/image")
+    @GetMapping("/poketex/{id}/image")
     public ResponseEntity<String> getPokemonImageById(@PathVariable("id") Integer id) {
-        Optional<Pokedex> pokedex = pokemonCatalogRepository.findById(id);
+        Optional<Poketex> poketex = pokemonCatalogService.findById(id);
 
-        if (pokedex.isPresent()) {
-            String base64Image = pokedex.get().getImage(); // Assuming the image field name is 'image'
+        if (poketex.isPresent()) {
+            String base64Image = poketex.get().getImage();
             return new ResponseEntity<>(base64Image, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -101,13 +95,13 @@ public class PokemonCatalogController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/create")
-    public ResponseEntity<Pokedex> createPokemon(@RequestHeader(value = "Authorization") String token, @RequestBody PoketexRequest pokedexRequest) {
+    public ResponseEntity<Poketex> createPokemon(@RequestHeader(value = "Authorization") String token, @RequestBody PoketexRequest poketexRequest) {
         try {
             String username = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
-            Pokedex pokedex = pokemonCatalogService.createPokedex(pokedexRequest, username);
-            pokemonCatalogRepository.save(pokedex);
+            Poketex poketex = pokemonCatalogService.createPoketex(poketexRequest, username);
+            pokemonCatalogService.save(poketex);
 
-            return new ResponseEntity<>(pokedex, HttpStatus.CREATED);
+            return new ResponseEntity<>(poketex, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

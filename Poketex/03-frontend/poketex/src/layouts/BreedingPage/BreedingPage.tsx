@@ -137,7 +137,7 @@ export const BreedingPage = () => {
             setHttpError(error.message);
 
         })
-        window.scrollTo(0, 0);
+
     }, [currentPage, searchUrl]);
 
 

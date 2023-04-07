@@ -1,6 +1,6 @@
 package com.fiipractic.stablediffusion.config;
 
-import com.fiipractic.pokemoncatalog.model.Pokedex;
+import com.fiipractic.pokemoncatalog.model.Poketex;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
@@ -15,14 +15,14 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
         HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
 
-        config.exposeIdsFor(Pokedex.class);
-        disableHttpMethods(Pokedex.class, config, theUnsupportedActions);
+        config.exposeIdsFor(Poketex.class);
+        disableHttpMethods(Poketex.class, config, theUnsupportedActions);
         
 
         cors.addMapping(config.getBasePath() + "/**").allowedOrigins(theAllowedOrigin);
     }
 
-    private void disableHttpMethods(Class<Pokedex> pokedexClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedActions) {
+    private void disableHttpMethods(Class<Poketex> pokedexClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedActions) {
         config.getExposureConfiguration()
                 .forDomainType(pokedexClass)
                 .withItemExposure((metadata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
