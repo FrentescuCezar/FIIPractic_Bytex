@@ -1,133 +1,53 @@
 import { useState, useEffect } from "react";
-import ImageRequestModel from "../../models/TextToImageRequestModel";
-import { SpinnerLoading } from "../Utils/SpinnerLoading";
-import PoketexRequestModel from "../../models/PoketexRequestModel";
-
-import image from "../../Images/PublicImages/MonBuilderImage.png"
-
 import { useOktaAuth } from '@okta/okta-react';
-
-import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 
+import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
+import { SpinnerLoading } from "../Utils/SpinnerLoading";
+
+import { submitPrompt, fetchPokemonName, fetchPokemonDescription, submitPokemon } from "./Api/MonBuilderApi";
+
+
+import image from "../../Images/PublicImages/MonBuilderImage.png"
 
 
 export const MonBuilderPage = () => {
 
     const { authState } = useOktaAuth();
-
     const history = useHistory();
 
 
-
-    const [steps, setSteps] = useState(20);
+    // Prompt and steps states
     const [prompt, setPrompt] = useState("");
+    const [steps, setSteps] = useState(20);
     const [seedInput, setSeedInput] = useState("");
     const [negativePrompt, setNegativePrompt] = useState("");
+
+    // Final prompt and steps states
     const [finalPrompt, setFinalPrompt] = useState("");
     const [finalSteps, setFinalSteps] = useState(20);
 
-
-
+    // Generated image states
     const [imageData, setImageData] = useState("");
     const [seed, setSeed] = useState(0);
     const generation = 0;
 
-
-    // 2 Buttons
+    // Pokemon name and description states
     const [pokemonName, setPokemonName] = useState("");
     const [pokemonDescription, setPokemonDescription] = useState("");
 
-
-
+    // Loading states
     const [isImageLoading, setIsImageLoading] = useState(false);
     const [isNameLoading, setIsNameLoading] = useState(false);
     const [isDescriptionLoading, setIsDescriptionLoading] = useState(false);
+
     const [error, setError] = useState("");
 
 
 
 
-    // Image generation
-    async function submitPrompt(steps: number, prompt: string, seed?: number, negativePrompt?: string) {
-        setIsImageLoading(true);
-        const imageRequestModel = new ImageRequestModel(steps, prompt, seed, negativePrompt);
-        const url = `http://localhost:8081/api/trial`;
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(imageRequestModel),
-        };
-
-        try {
-            const response = await fetch(url, requestOptions);
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error("Something went wrong!");
-            }
-            setImageData(data.image);
-            setSeed(data.seed);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsImageLoading(false);
-        }
-    }
 
 
-
-
-    // Name generation
-    async function fetchPokemonName(prompt: string) {
-        setIsNameLoading(true);
-        const url = `http://localhost:8088/name?prompt=${encodeURIComponent(prompt)}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error("Something went wrong!");
-            }
-
-            setPokemonName(data.name);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsNameLoading(false);
-        }
-    }
-
-
-
-
-
-
-
-
-    // Description generation
-    async function fetchPokemonDescription(prompt: string) {
-        setIsDescriptionLoading(true);
-        const url = `http://localhost:8088/description?prompt=${encodeURIComponent(prompt)}`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error("Something went wrong!");
-            }
-
-            setPokemonDescription(data.description);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsDescriptionLoading(false);
-        }
-    }
 
 
 
@@ -139,47 +59,22 @@ export const MonBuilderPage = () => {
         }
         setError("");
         setFinalPrompt(prompt);
-        setFinalSteps(steps)
+        setFinalSteps(steps);
         setPokemonDescription("");
         setPokemonName("");
-        submitPrompt(steps, prompt, seedInput ? parseInt(seedInput) : undefined, negativePrompt);
+        submitPrompt(
+            steps,
+            prompt,
+            setIsImageLoading,
+            setImageData,
+            setSeed,
+            seedInput ? parseInt(seedInput) : undefined,
+            negativePrompt
+        );
     };
 
 
     console.log(pokemonDescription)
-
-
-    async function submitPokemon(name: string, description: string, prompt: string, image: string, steps: number, seed: number, generation: number, negativePrompt?: string, parent1?: number, parent2?: number) {
-
-        const poketexRequestModel = new PoketexRequestModel(name, description, prompt, image, steps, seed, generation, negativePrompt, parent1, parent2);
-
-        const url = `http://localhost:8084/api/create`;
-        const requestOptons = {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${authState.accessToken?.accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(poketexRequestModel)
-        };
-        try {
-            const response = await fetch(url, requestOptons);
-
-            if (!response.ok) {
-                throw new Error('Something went wrong!');
-            }
-
-            // Show success alert
-            alert('Pokemon successfully created!');
-
-            // Redirect to /home
-            history.push('/home');
-        } catch (error) {
-            console.error(error);
-            alert('Failed to create Pokemon. Please try again.');
-        }
-
-    }
 
 
 
@@ -225,7 +120,7 @@ export const MonBuilderPage = () => {
                         {imageData && (
                             <>
                                 <div className="my-5">
-                                    <Button onClick={() => fetchPokemonName(finalPrompt)} disabled={isNameLoading}>
+                                    <Button onClick={() => fetchPokemonName(finalPrompt, setIsNameLoading, setPokemonName)} disabled={isNameLoading}>
                                         {isNameLoading ? "Generating Name..." : "Generate Name"}
                                     </Button>
                                     {isNameLoading ? (
@@ -238,7 +133,11 @@ export const MonBuilderPage = () => {
                                 </div>
 
                                 <div className="my-5">
-                                    <Button onClick={() => fetchPokemonDescription(finalPrompt)} disabled={isDescriptionLoading}>
+                                    <Button onClick={() => fetchPokemonDescription(
+                                        finalPrompt,
+                                        setIsDescriptionLoading,
+                                        setPokemonDescription
+                                    )} disabled={isDescriptionLoading}>
                                         {isDescriptionLoading ? "Generating Description..." : "Generate Description"}
                                     </Button>
                                     {isDescriptionLoading && (
@@ -249,7 +148,18 @@ export const MonBuilderPage = () => {
                                     {pokemonDescription && <p>Pokemon Description: {pokemonDescription}</p>}
                                     {pokemonName && pokemonDescription && (
                                         <Button
-                                            onClick={() => submitPokemon(pokemonName, pokemonDescription, finalPrompt, imageData, finalSteps, seed, generation, negativePrompt)}
+                                            onClick={() => submitPokemon(
+                                                pokemonName,
+                                                pokemonDescription,
+                                                finalPrompt,
+                                                imageData,
+                                                finalSteps,
+                                                seed,
+                                                generation,
+                                                authState,
+                                                history,
+                                                negativePrompt
+                                            )}
                                         >
                                             Submit Pokemon
                                         </Button>

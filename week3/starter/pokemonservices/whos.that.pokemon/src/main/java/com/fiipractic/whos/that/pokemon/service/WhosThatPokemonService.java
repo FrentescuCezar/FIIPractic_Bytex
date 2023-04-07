@@ -1,8 +1,9 @@
 package com.fiipractic.whos.that.pokemon.service;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fiipractic.pokemoncatalog.model.Poketex;
-import com.fiipractic.whos.that.pokemon.model.CustomResponseWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,42 +14,31 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class WhosThatPokemonService extends PageImpl<Poketex> {
-    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public WhosThatPokemonService(List<Poketex> content, Pageable pageable, long total) {
-        super(content, pageable, total);
-    }
-
-    public WhosThatPokemonService(List<Poketex> content) {
-        super(content);
-    }
-
+public class WhosThatPokemonService {
     public WhosThatPokemonService() {
-        super(Arrays.asList());
     }
 
-    public Poketex getRandomPokemon() {
-        RestTemplate restTemplate = new RestTemplate();
+    public String getRandomPokemon() throws JsonProcessingException {
+
+         RestTemplate restTemplate = new RestTemplate();
+         ObjectMapper objectMapper = new ObjectMapper();
 
         int limit = 1;
         String url = "http://localhost:8084/api/poketex/random?limit=" + limit;
 
-        ResponseEntity<CustomResponseWrapper> response = restTemplate.getForEntity(url, CustomResponseWrapper.class);
-        CustomResponseWrapper customResponse = response.getBody();
-
-        if (customResponse != null && customResponse.getContent() != null && !customResponse.getContent().isEmpty()) {
-            return customResponse.getContent().get(0);
-        } else {
-            return null;
-        }
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);
+        JsonNode responseBody = response.getBody();
+        JsonNode contentNode = responseBody.get("content");
+        return objectMapper.writeValueAsString(contentNode.get(0));
+   
     }
 
-    public Poketex getPokemonById(Integer pokemonId) {
+    public String getPokemonById(Integer pokemonId) throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+
         String url = "http://localhost:8084/api/poketexes/" + pokemonId;
-        ResponseEntity<Poketex> response = restTemplate.getForEntity(url, Poketex.class);
-        return response.getBody();
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);
+        return objectMapper.writeValueAsString(response.getBody());
     }
-
-
 }
