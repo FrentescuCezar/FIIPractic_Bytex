@@ -15,8 +15,8 @@ public class Comment {
     @Column(name="id")
     private Integer id;
 
-    @Column(name="user_email")
-    private String userEmail;
+    @Column(name="user_name")
+    private String userName;
 
     @Column(name = "date")
     @CreationTimestamp

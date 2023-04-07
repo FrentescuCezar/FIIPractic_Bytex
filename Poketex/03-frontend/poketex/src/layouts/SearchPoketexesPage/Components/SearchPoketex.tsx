@@ -1,24 +1,9 @@
 import { Link } from "react-router-dom";
 import PoketexModel from "../../../models/PoketexModel";
+import { truncateText, formatTextWithNewlines } from "../../Utils/PoketexDetailsUtils";
 
 export const SearchPoketex: React.FC<{ poketex: PoketexModel }> = (props) => {
 
-    function truncateText(text: string, maxLength: number) {
-        if (text.length > maxLength) {
-            return text.slice(0, maxLength) + '...';
-        } else {
-            return text;
-        }
-    }
-
-    function formatTextWithNewlines(text: string) {
-        return text.split('\n').map((line, index) => (
-            <span key={index}>
-                {line}
-                <br />
-            </span>
-        ));
-    }
 
 
     const MAX_LENGTH_DESCRIPTION = 400;

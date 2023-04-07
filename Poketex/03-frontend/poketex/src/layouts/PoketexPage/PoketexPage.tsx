@@ -212,7 +212,7 @@ export const PoketexPage = () => {
                 for (const key in responseData) {
                     loadedComments.push({
                         id: responseData[key].id,
-                        userEmail: responseData[key].userEmail,
+                        userName: responseData[key].userName,
                         date: responseData[key].date,
                         rating: responseData[key].rating,
                         pokemonId: responseData[key].pokemonId,

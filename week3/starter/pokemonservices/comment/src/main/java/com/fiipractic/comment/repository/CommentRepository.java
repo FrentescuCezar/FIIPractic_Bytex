@@ -23,6 +23,6 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
             "ORDER BY weighted_rating DESC", nativeQuery = true)
     List<Object[]> findBestRatedPokemonIds();
 
-    Comment findByUserEmailAndPokemonId(String userEmail, Integer pokemonId);
+    Comment findByUserNameAndPokemonId(String userEmail, Integer pokemonId);
 
 }

@@ -1,6 +1,6 @@
 class Comment {
     public id: number;
-    public userEmail: string;
+    public userName: string;
     public date: Date;
     public rating: number;
     public pokemonId: number;
@@ -8,14 +8,14 @@ class Comment {
 
     constructor(
         id: number,
-        userEmail: string,
+        userName: string,
         date: Date,
         rating: number,
         pokemonId: number,
         commentDescription: string
     ) {
         this.id = id;
-        this.userEmail = userEmail;
+        this.userName = userName;
         this.date = date;
         this.rating = rating;
         this.pokemonId = pokemonId;

@@ -7,6 +7,7 @@ import { SpinnerLoading } from '../Utils/SpinnerLoading';
 import NavBarUserCircle from './NavBarUserCircle';
 
 import jwt_decode from 'jwt-decode';
+import { LatestComments } from '../PoketexPage/Components/Comments/LatestComments';
 
 
 interface JwtPayload {
@@ -26,11 +27,22 @@ export const Navbar: React.FC<{}> = (props) => {
 
     const handleLogout = async () => oktaAuth.signOut();
     let JWTDecoded;
+    let usernameWithoutAtSymbol;
     if (authState.isAuthenticated) {
         JWTDecoded = jwt_decode<JwtPayload>(authState.accessToken.accessToken);
+
+        const atIndex = (JWTDecoded.sub)?.indexOf('@');
+        if (atIndex !== undefined && atIndex >= 0) {
+            usernameWithoutAtSymbol = (JWTDecoded.sub)!.slice(0, atIndex);
+        } else {
+            usernameWithoutAtSymbol = 'UsernameNotFound';
+        }
     } else {
         JWTDecoded = { sub: "Not_Logged_In" };
+        usernameWithoutAtSymbol = "Not_Logged_In";
     }
+
+
 
 
 
@@ -76,7 +88,7 @@ export const Navbar: React.FC<{}> = (props) => {
                         <Link type='button' className="btn btn-outline-dark mx-5 btn-red-hover" to='/login'>Sign In</Link>
                         :
                         //<button className='btn btn-outline-dark mx-5 btn-red-hover' onClick={handleLogout}>Logout</button>
-                        <NavBarUserCircle username={JWTDecoded.sub} onLogout={handleLogout} />
+                        <NavBarUserCircle username={usernameWithoutAtSymbol} onLogout={handleLogout} authState={authState} />
                     }
                 </div>
             </div>

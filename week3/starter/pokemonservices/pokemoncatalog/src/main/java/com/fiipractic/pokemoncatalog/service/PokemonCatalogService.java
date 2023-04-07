@@ -31,12 +31,14 @@ public class PokemonCatalogService {
         this.pokemonCatalogRepository = pokemonCatalogRepository;
     }
 
-    public Optional<Poketex> findById(Integer id) {
-        return pokemonCatalogRepository.findById(id);
-    }
+
 
     public Poketex save(Poketex poketex) {
         return pokemonCatalogRepository.save(poketex);
+    }
+
+    public Optional<Poketex> findById(Integer id) {
+        return pokemonCatalogRepository.findById(id);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -46,14 +48,14 @@ public class PokemonCatalogService {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    public Page<Poketex> getRandomPokemons(int limit) {
+    public Page<Poketex> findRandomPokemons(int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        return pokemonCatalogRepository.getRandomPokemons(pageable);
+        return pokemonCatalogRepository.findRandomPokemons(pageable);
     }
 
-    public Page<Poketex> getRandomPokemonByUsername(String username, int limit) {
+    public Page<Poketex> findRandomPokemonsByUsername(String username, int limit) {
         Pageable pageable = PageRequest.of(0, limit);
-        return pokemonCatalogRepository.getRandomPokemonByUsername(username, pageable);
+        return pokemonCatalogRepository.findRandomPokemonsByUsername(username, pageable);
     }
 
     public Page<Poketex> findByUsername(String username, int page, int size) {
@@ -116,6 +118,12 @@ public class PokemonCatalogService {
         poketex.setExperienceGrowth(PokemonStatsGenerator.generateExperienceGrowth());
         poketex.setBaseTotal(PokemonStatsGenerator.calculateBaseTotal(poketex.getHp(), poketex.getAttack(), poketex.getSpAttack(), poketex.getSpDefense(), poketex.getSpeed()));
         poketex.setAbilities(PokemonStatsGenerator.generateRandomAbilities());
+
+
+        int atSymbolIndex = username.indexOf('@');
+        if (atSymbolIndex >= 0)
+           username = username.substring(0, atSymbolIndex);
+
         poketex.setUsername(username);
 
         return poketex;

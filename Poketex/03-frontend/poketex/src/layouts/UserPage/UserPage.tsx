@@ -82,7 +82,6 @@ export const UserPage = () => {
             setHttpError(error.message);
 
         })
-        window.scrollTo(0, 0);
     }, [currentPage, searchUrl]);
 
 

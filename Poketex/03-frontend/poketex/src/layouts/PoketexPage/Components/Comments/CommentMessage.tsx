@@ -11,13 +11,13 @@ export const CommentMessage: React.FC<{ comment: CommentModel }> = (props) => {
     const dateRender = longMonth + ' ' + dateDay + ', ' + dateYear;
 
 
-    const userEmail = props.comment.userEmail.substring(0, props.comment.userEmail.indexOf('@'));
+    const userEmail = props.comment.userName;
 
     return (
         <div>
             <div className='col-sm-8 col-md-8'>
                 <h5>
-                    {props.comment.userEmail}
+                    {props.comment.userName}
                 </h5>
                 <div className='row'>
                     <div className='col'>

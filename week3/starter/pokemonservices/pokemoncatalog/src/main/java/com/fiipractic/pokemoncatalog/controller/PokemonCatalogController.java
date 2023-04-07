@@ -41,14 +41,14 @@ public class PokemonCatalogController {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/poketex/random")
     public Page<Poketex> getRandomPokemons(@RequestParam(value = "limit", required = true) Integer limit) {
-        return pokemonCatalogService.getRandomPokemons(limit);
+        return pokemonCatalogService.findRandomPokemons(limit);
     }
 
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/poketex/user/random")
     public Page<Poketex> getRandomPokemonsByUsername(@RequestParam(value = "username") String username, @RequestParam(value = "limit") Integer limit) {
-        return pokemonCatalogService.getRandomPokemonByUsername(username, limit);
+        return pokemonCatalogService.findRandomPokemonsByUsername(username, limit);
     }
 
 

@@ -34,7 +34,7 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
     public void postComment(String userEmail, CommentRequest commentRequest) throws Exception {
-        Comment validateComment = commentRepository.findByUserEmailAndPokemonId(userEmail, commentRequest.getPokemonId());
+        Comment validateComment = commentRepository.findByUserNameAndPokemonId(userEmail, commentRequest.getPokemonId());
 
         if (validateComment != null) {
             throw new Exception("You have already commented on this pokemon");
@@ -42,7 +42,12 @@ public class CommentService {
         Comment comment = new Comment();
         comment.setPokemonId(commentRequest.getPokemonId());
         comment.setRating(commentRequest.getRating());
-        comment.setUserEmail(userEmail);
+
+        int atSymbolIndex = userEmail.indexOf('@');
+        if (atSymbolIndex >= 0)
+            userEmail = userEmail.substring(0, atSymbolIndex);
+
+        comment.setUserName(userEmail);
 
         if(commentRequest.getCommentDescription().isPresent()){
             comment.setCommentDescription(commentRequest.getCommentDescription().map(Object::toString)
@@ -53,8 +58,8 @@ public class CommentService {
         commentRepository.save(comment);
     }
 
-    public Boolean userCommentAlreadyExists(String userEmail, Integer pokemonId){
-        Comment validateComment = commentRepository.findByUserEmailAndPokemonId(userEmail, pokemonId);
+    public Boolean userCommentAlreadyExists(String userName, Integer pokemonId){
+        Comment validateComment = commentRepository.findByUserNameAndPokemonId(userName, pokemonId);
         if (validateComment != null) {
             return true;
         }
