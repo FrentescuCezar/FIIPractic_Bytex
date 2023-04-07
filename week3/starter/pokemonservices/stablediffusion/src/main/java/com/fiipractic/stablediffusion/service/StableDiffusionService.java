@@ -5,27 +5,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fiipractic.pokemoncatalog.model.Pokedex;
 import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
-import com.fiipractic.stablediffusion.requestmodel.PoketexRequest;
 import com.fiipractic.stablediffusion.utils.JsonUtils;
-import com.fiipractic.stablediffusion.utils.PokemonStatsGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class StableDiffusionService {
@@ -40,19 +29,6 @@ public class StableDiffusionService {
     }
 
 
-    public List<Pokedex> getPokemonDetailsByIds(List<Integer> pokemonIds) {
-        List<Pokedex> pokemons = stableDiffusionRepository.findAllById(pokemonIds);
-        Map<Integer, Pokedex> pokemonMap = pokemons.stream().collect(Collectors.toMap(Pokedex::getId, Function.identity()));
-
-        List<Pokedex> orderedPokemons = new ArrayList<>();
-        for (Integer id : pokemonIds) {
-            Pokedex pokemon = pokemonMap.get(id);
-            if (pokemon != null) {
-                orderedPokemons.add(pokemon);
-            }
-        }
-        return orderedPokemons;
-    }
 
     public String generateTextToImage(String prompt, Optional<Long> seed,Optional<String> negativePrompt, int batch_size, int steps) throws JsonProcessingException {
         String txt2imgUrl = "http://127.0.0.1:7861/sdapi/v1/txt2img";
@@ -161,51 +137,6 @@ public class StableDiffusionService {
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
 
         return restTemplate.postForEntity(url, entity, String.class);
-    }
-
-    public Pokedex createPokedex(PoketexRequest pokedexRequest, String username) throws IOException {
-        LOGGER.info("Creating Pokedex for user: {}", username);
-        LOGGER.info("PoketexRequest: {}", pokedexRequest);
-
-        Pokedex pokedex = new Pokedex();
-
-        pokedex.setName(pokedexRequest.getName());
-        pokedex.setDescription(pokedexRequest.getDescription());
-        pokedex.setPrompt(pokedexRequest.getPrompt());
-
-        if (pokedexRequest.getNegativePrompt() != null && pokedexRequest.getNegativePrompt().isPresent()) {
-            pokedex.setNegativePrompt(pokedexRequest.getNegativePrompt().map(Object::toString)
-                    .orElse(null));
-        }
-
-        if(pokedexRequest.getParent1() != null && pokedexRequest.getParent1().isPresent()){
-            pokedex.setParent1(pokedexRequest.getParent1().orElse(null));
-        }
-
-        if(pokedexRequest.getParent2() != null && pokedexRequest.getParent2().isPresent()){
-            pokedex.setParent2(pokedexRequest.getParent2().orElse(null));
-        }
-
-        pokedex.setSteps(pokedexRequest.getSteps());
-        pokedex.setSeed(pokedexRequest.getSeed());
-        pokedex.setImage(pokedexRequest.getImage());
-        pokedex.setGeneration(pokedexRequest.getGeneration());
-
-        pokedex.setHp(PokemonStatsGenerator.generateHP());
-        pokedex.setAttack(PokemonStatsGenerator.generateAttack());
-        pokedex.setSpAttack(PokemonStatsGenerator.generateSpecialAttack());
-        pokedex.setDefense(PokemonStatsGenerator.generateDefense());
-        pokedex.setSpDefense(PokemonStatsGenerator.generateSpecialDefense());
-        pokedex.setSpeed(PokemonStatsGenerator.generateSpeed());
-        pokedex.setBaseEggSteps(PokemonStatsGenerator.generateBaseEggSteps());
-        pokedex.setExperienceGrowth(PokemonStatsGenerator.generateExperienceGrowth());
-        pokedex.setBaseTotal(PokemonStatsGenerator.calculateBaseTotal(pokedex.getHp(), pokedex.getAttack(), pokedex.getSpAttack(), pokedex.getSpDefense(), pokedex.getSpeed()));
-        pokedex.setAbilities(PokemonStatsGenerator.generateRandomAbilities());
-        pokedex.setUsername(username);
-
-        LOGGER.info("Generated Pokedex: {}", pokedex);
-
-        return pokedex;
     }
 
 

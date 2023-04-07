@@ -1,11 +1,11 @@
 server:
-  port: 8081
+  port: 8084
 
 spring:
   application:
     name: pokemoncatalog
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/poketex
     username: postgres
     password: desene123
     hikari:
@@ -19,3 +19,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  data:
+    rest:
+      base-path: /api
