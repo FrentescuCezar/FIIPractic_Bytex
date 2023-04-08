@@ -19,7 +19,7 @@ public class ChatGPTService {
 
     public String getChatGPTResponse(String prompt, boolean isNameRequest) throws JsonProcessingException {
         ChatGPT chatGPT = ChatGPT.builder()
-                .apiKey("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")
+                .apiKey("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")
                 .apiHost("https://api.openai.com/") //Reverse proxy address
                 .build()
                 .init();
