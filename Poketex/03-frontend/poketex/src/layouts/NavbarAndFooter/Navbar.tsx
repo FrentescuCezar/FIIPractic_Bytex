@@ -7,7 +7,7 @@ import { SpinnerLoading } from '../Utils/SpinnerLoading';
 import NavBarUserCircle from './NavBarUserCircle';
 
 import jwt_decode from 'jwt-decode';
-import { LatestComments } from '../PoketexPage/Components/Comments/LatestComments';
+
 import { extractNameFromEmail } from '../Utils/PoketexDetailsUtils';
 
 
@@ -62,13 +62,13 @@ export const Navbar: React.FC<{}> = (props) => {
 
                 <div className="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul className="navbar-nav me-auto my-2 my-lg-0">
-                        <li className="nav-item me-auto mx-4 ">
+                        <li className="nav-item" style={{ marginLeft: '25px' }}>
                             <NavLink className="nav-link btn-black-bold" to="/home">Home</NavLink>
                         </li>
-                        <li className="nav-item mx-2">
+                        <li className="nav-item" style={{ marginLeft: '10px' }}>
                             <NavLink className="nav-link btn-black-bold" to="/search">Search</NavLink>
                         </li>
-                        <li className="nav-item ">
+                        <li className="nav-item" style={{ marginLeft: '10px' }}>
                             {authState.isAuthenticated
                                 ?
                                 <NavLink className="nav-link btn-black-bold" to="/monbuilder">MonBuilder</NavLink>
@@ -76,7 +76,7 @@ export const Navbar: React.FC<{}> = (props) => {
                                 <NavLink className="nav-link btn-black-bold" to="/login">MonBuilder</NavLink>
                             }
                         </li>
-                        <li className="nav-item ">
+                        <li className="nav-item" style={{ marginLeft: '10px' }}>
                             <NavLink className="nav-link btn-black-bold" to="/pokemystery">PokéMystery</NavLink>
                         </li>
                     </ul>
