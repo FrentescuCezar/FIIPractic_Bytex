@@ -1,0 +1,24 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: pokemoncatalog
+  datasource:
+    url: jdbc:postgresql://localhost:5432/poketex
+    username: postgres
+    password: desene123
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 5
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  data:
+    rest:
+      base-path: /api
