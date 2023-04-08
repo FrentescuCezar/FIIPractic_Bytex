@@ -27,7 +27,7 @@ export const RelatedPoketex: React.FC<{ poketex: PoketexModel }> = (props) => {
                             />
                         </Link>
                         :
-                        <img src={require('../../../Images/BooksImages/book-luv2code-1000.png')}
+                        <img src={require('../../../Images/PokemonImage/Default-Pokemon.png')}
                             width='200'
                             height='200'
                             alt='Pokemon'
