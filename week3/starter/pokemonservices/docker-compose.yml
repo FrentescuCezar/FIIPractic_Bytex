@@ -3,8 +3,8 @@ services:
     container_name: postgres
     image: postgres
     environment:
-      POSTGRES_USER: fiipractic
-      POSTGRES_PASSWORD: fiipractic
+      POSTGRES_USER: poketex
+      POSTGRES_PASSWORD: desene123
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
@@ -13,6 +13,11 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   pgadmin:
     container_name: pgadmin
@@ -28,6 +33,64 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+
+  stablediffusion:
+    build: ./stablediffusion
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8081:8081
+    networks:
+      - postgres
+    restart: unless-stopped
+
+
+  pokemoncatalog:
+    build: ./pokemoncatalog
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8084:8084
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  comment:
+    build: ./comment
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8086:8086
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  chatgpt:
+    build: ./chatgpt
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8088:8088
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  breeding:
+    build: ./breeding
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8089:8089
+    networks:
+      - postgres
+    restart: unless-stopped
+
+
 
 networks:
   postgres:

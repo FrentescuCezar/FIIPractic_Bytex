@@ -15,17 +15,11 @@
     <name>pokemonservices</name>
     <description>Demo project for Spring Boot</description>
     <modules>
-        <module>battle</module>
         <module>pokemoncatalog</module>
-        <module>chatgpt</module>
-        <module>chatgpt</module>
-        <module>chatgpt</module>
         <module>chatgpt</module>
         <module>stablediffusion</module>
         <module>breeding</module>
-        <module>breeding</module>
         <module>whos.that.pokemon</module>
-        <module>comment</module>
         <module>comment</module>
     </modules>
     <properties>

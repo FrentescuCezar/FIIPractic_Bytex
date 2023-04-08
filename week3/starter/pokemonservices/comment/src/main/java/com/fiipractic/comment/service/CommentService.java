@@ -3,7 +3,6 @@ package com.fiipractic.comment.service;
 import com.fiipractic.comment.model.Comment;
 import com.fiipractic.comment.repository.CommentRepository;
 import com.fiipractic.comment.requestmodels.CommentRequest;
-import com.fiipractic.stablediffusion.repository.StableDiffusionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

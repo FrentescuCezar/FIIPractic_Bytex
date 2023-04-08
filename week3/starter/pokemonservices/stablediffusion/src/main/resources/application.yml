@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: battle
+    name: stablediffusion
   datasource:
     url: jdbc:postgresql://localhost:5432/poketex
     username: postgres
