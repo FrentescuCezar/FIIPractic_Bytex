@@ -23,7 +23,7 @@ export const LibraryServices = () => {
                                 Sign up
                             </Link>
                             :
-                            <Link type='button' className='btn main-color-gray-button btn-lg' to='/search'>
+                            <Link type='button' className='btn main-color-gray-button btn-lg' to='/monbuilder'>
                                 Create Your Pokémon
                             </Link>
                         }
