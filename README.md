@@ -11,8 +11,6 @@ This project was developed during a training organized by the company Bytex, cal
 ## Features
 
 
-
-
 ### Non-logged in users
 - **Home page:** Displays the most voted Pokemons.
 - **Search page:** Offers pagination and allows searching for pokemons by name, prompt, and user. The default is the most recent pokemons.
@@ -25,6 +23,18 @@ This project was developed during a training organized by the company Bytex, cal
 - **Breed Pokemons:** Combine attributes of different Pokemons to create unique offspring.
 - **Comment and rate:** Provide feedback on other users' Pokemon creations.
 - **Dynamic profile picture:** On each refresh, the user's profile picture transforms into one of their created Pokemons.
+
+| Homepage                                                                                              | Design your Pokemon                                                                                             | Breed with other pokemons                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| ![](https://github.com/FrentescuCezar/FIIPractic_Bytex/blob/main/Poketex/Screenshots/Homepage.png) | ![](https://github.com/FrentescuCezar/FIIPractic_Bytex/blob/main/Poketex/Screenshots/Design-Your-Pokemon.png) | ![](https://github.com/FrentescuCezar/FIIPractic_Bytex/blob/main/Poketex/Screenshots/Breeding.png) |
+
+
+| Pokemon Page                                                                                              | Comments                                                                                            | PokeMystery                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| <img src="https://github.com/FrentescuCezar/FIIPractic_Bytex/blob/main/Poketex/Screenshots/Pokemon-Page.png" width="700" height="300"> | <img src="https://github.com/FrentescuCezar/FIIPractic_Bytex/blob/main/Poketex/Screenshots/Comments.png"> | <img src="https://github.com/FrentescuCezar/FIIPractic_Bytex/blob/main/Poketex/Screenshots/PokeMystery.png"> |
+
+
+
 
 ## AI Model & Technologies
 
@@ -43,7 +53,10 @@ _PostgreSQL_ [PostgreSQL official website](https://www.postgresql.org/ ) <br />
 
 **Stable Diffusion** <br />
 - Art generation is powered by the model trained by Justin Pinkney, with Lambda Diffuser and Stable Diffusion: https://huggingface.co/justinpinkney/pokemon-stable-diffusion.
-- Stable Diffusion module utilizes the Automatic1111 nowebui Rest API.
+- Stable Diffusion module utilizes the Automatic1111 nowebui Rest API: https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/API
+
+**ChatGpt** <br />
+- The Name and the Description of the pokemon is automatically generated with ChatGPT-3.5TURBO model : https://github.com/PlexPt/chatgpt-java
 
 **Security** <br />
 - Authentication and user management is handled by Okta with OAuth2 security. https://developer.okta.com/
@@ -53,4 +66,6 @@ _PostgreSQL_ [PostgreSQL official website](https://www.postgresql.org/ ) <br />
 
 - Bytex for organizing the "Java in the world of microservices" training (Trainers : Alexandru Cretu, Cristian Danila)
 - Justin Pinkney for the art generation model.
+- Automatic1111 for the Stable Diffusion API
+- PlexPt for the ChatGPT connexions
 - Okta for providing user authentication and management.
