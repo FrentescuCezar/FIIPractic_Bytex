@@ -70,4 +70,12 @@ public class ExtractJWT {
 
         return null;
     }
+
+    public static String userEmailExtraction(String token) throws InvalidTokenException  {
+        String userEmail = ExtractJWT.payloadJWTExtraction(token, "\"sub\"");
+        if (userEmail == null) {
+            throw new InvalidTokenException ("Invalid token");
+        }
+        return userEmail;
+    }
 }
