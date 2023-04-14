@@ -134,17 +134,15 @@ public class BreedingService {
         return restTemplate.getForObject(url, PokemonDetailsDTO.class);
     }
 
-    private ResponseEntity<String> createPokemon(CreatePokemonRequest requestBody, String token) throws JsonProcessingException {
+    private ResponseEntity<String> createPokemon(CreatePokemonRequest requestBody, String token) {
         String createPokemonUrl = poketexBaseUrl + "/api/poketex/create";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + token);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(requestBody);
+        HttpEntity<CreatePokemonRequest> entity = new HttpEntity<>(requestBody, headers);
 
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(createPokemonUrl, entity, String.class);
             return response;
