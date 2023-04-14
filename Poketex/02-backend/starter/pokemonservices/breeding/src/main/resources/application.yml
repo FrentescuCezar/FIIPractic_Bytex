@@ -1,6 +1,12 @@
 server:
   port: 8089
 
+api:
+  base-url:
+    poketex: http://localhost:8084
+    image-to-image: http://localhost:8081
+    chatgpt: http://localhost:8088
+
 spring:
   application:
     name: breeding
