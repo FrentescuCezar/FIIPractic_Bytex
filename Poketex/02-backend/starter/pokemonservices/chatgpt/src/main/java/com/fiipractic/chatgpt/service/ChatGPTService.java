@@ -7,19 +7,22 @@ import com.plexpt.chatgpt.ChatGPT;
 import com.plexpt.chatgpt.entity.chat.ChatCompletion;
 import com.plexpt.chatgpt.entity.chat.ChatCompletionResponse;
 import com.plexpt.chatgpt.entity.chat.Message;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class ChatGPTService {
-
-    public ChatGPTService() {
+    private final String apiKey;
+    public ChatGPTService(@Value("${openai.api.key}") String apiKey) {
+        this.apiKey = apiKey;
     }
+
 
     public String getChatGPTResponse(String prompt, boolean isNameRequest) throws JsonProcessingException {
         ChatGPT chatGPT = ChatGPT.builder()
-                .apiKey("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")
+                .apiKey(apiKey)
                 .apiHost("https://api.openai.com/") //Reverse proxy address
                 .build()
                 .init();

@@ -19,3 +19,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}

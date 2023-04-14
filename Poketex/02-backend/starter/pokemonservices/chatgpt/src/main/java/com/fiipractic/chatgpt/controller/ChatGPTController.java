@@ -3,6 +3,7 @@ package com.fiipractic.chatgpt.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fiipractic.chatgpt.service.ChatGPTService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "http://localhost:3000")
 public class ChatGPTController {
-    ChatGPTService chatGPTService;
 
+    private final ChatGPTService chatGPTService;
+    @Autowired
     public ChatGPTController(ChatGPTService chatGPTService) {
         this.chatGPTService = chatGPTService;
     }
