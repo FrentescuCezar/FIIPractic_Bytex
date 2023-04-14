@@ -4,7 +4,7 @@ import com.fiipractic.pokemoncatalog.model.Poketex;
 import com.fiipractic.pokemoncatalog.repository.PokemonCatalogRepository;
 import com.fiipractic.pokemoncatalog.requestmodel.PoketexRequest;
 import com.fiipractic.pokemoncatalog.utils.PokemonStatsGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,18 +20,14 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @Service
 public class PokemonCatalogService {
 
     private final PokemonCatalogRepository pokemonCatalogRepository;
 
-    @Autowired
     public PokemonCatalogService(PokemonCatalogRepository pokemonCatalogRepository) {
         this.pokemonCatalogRepository = pokemonCatalogRepository;
     }
-
-
 
     public Poketex save(Poketex poketex) {
         return pokemonCatalogRepository.save(poketex);
