@@ -1,6 +1,10 @@
 server:
   port: 8085
 
+api:
+  base-url:
+    poketexUrl: http://localhost:8084/api/poketexes/
+
 spring:
   application:
     name: whos.that.pokemon
